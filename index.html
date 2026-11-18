@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="English">
+<meta name="theme-color" content="#4f46e5">
+<title>English — учим английский</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f6fb;--card:#fff;--text:#1d1f2e;--muted:#6b7085;--line:#e6e8f2;
+  --primary:#4f46e5;--primary-soft:#eceafe;--ok:#16a34a;--ok-soft:#dcfce7;--bad:#dc2626;--bad-soft:#fee2e2;--warn:#f59e0b;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#12131a;--card:#1c1e28;--text:#f1f2f7;--muted:#9a9fb3;--line:#2b2e3b;--primary:#818cf8;--primary-soft:#262a4a;--ok:#4ade80;--ok-soft:#163323;--bad:#f87171;--bad-soft:#3a1a1a}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Nunito,-apple-system,system-ui,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(76px + env(safe-area-inset-bottom))}
+main{max-width:560px;margin:0 auto;padding:16px}
+h1{font-size:26px;margin:8px 0 4px;font-weight:800}
+h2{font-size:20px;margin:20px 0 10px;font-weight:800}
+p{line-height:1.5}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.tile:active{transform:scale(.98)}
+.tile .ico{font-size:26px}
+.tile b{display:block;margin-top:6px;font-size:16px}
+.tile small{color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--primary);border-radius:99px;transition:width .3s}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font:inherit;font-weight:800;font-size:16px;cursor:pointer;background:var(--primary);color:#fff;margin-top:10px}
+.btn.sec{background:var(--primary-soft);color:var(--primary)}
+.btn:disabled{opacity:.45}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.stats{display:flex;gap:10px;margin:14px 0}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.stat b{font-size:22px;display:block}
+.stat small{color:var(--muted)}
+.back{background:none;border:0;color:var(--primary);font:inherit;font-weight:700;font-size:16px;padding:6px 0;cursor:pointer}
+/* flashcard */
+.flash{perspective:1000px;height:260px;margin:12px 0;cursor:pointer}
+.flash-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.flash.flip .flash-in{transform:rotateY(180deg)}
+.side{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.side.b{transform:rotateY(180deg);background:var(--primary-soft)}
+.side .w{font-size:34px;font-weight:800}
+.side .ex{color:var(--muted);margin-top:10px;font-size:15px}
+.hint{font-size:13px;color:var(--muted);position:absolute;bottom:14px}
+.speak{border:0;background:var(--primary-soft);color:var(--primary);border-radius:99px;width:46px;height:46px;font-size:20px;cursor:pointer;margin-top:14px}
+/* quiz */
+.q{font-size:24px;font-weight:800;text-align:center;margin:18px 0 6px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;font:inherit;font-size:17px;color:inherit;margin-bottom:10px;cursor:pointer}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.feedback{border-radius:14px;padding:12px 14px;margin-top:6px;font-weight:700}
+.feedback.ok{background:var(--ok-soft);color:var(--ok)}
+.feedback.bad{background:var(--bad-soft);color:var(--bad)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;min-height:52px;padding:10px;border:2px dashed var(--line);border-radius:14px;margin:10px 0}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 13px;font:inherit;font-size:16px;color:inherit;cursor:pointer}
+.chip.used{opacity:.25;pointer-events:none}
+.pill{display:inline-block;background:var(--primary-soft);color:var(--primary);border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.rule{background:var(--primary-soft);border-radius:14px;padding:12px 14px;margin:10px 0}
+.rule code{font-family:inherit;font-weight:800;color:var(--primary)}
+.done{color:var(--ok);font-weight:800}
+.inp{width:100%;padding:15px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:18px}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:5}
+nav button{flex:1;border:0;background:none;font:inherit;font-size:12px;font-weight:700;color:var(--muted);padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:22px}
+nav button.on{color:var(--primary)}
+.fade{animation:f .25s ease}
+@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav id="nav">
+  <button data-tab="home"><span>🏠</span>Главная</button>
+  <button data-tab="words"><span>📚</span>Слова</button>
+  <button data-tab="quiz"><span>✅</span>Тест</button>
+  <button data-tab="build"><span>🧩</span>Фразы</button>
+  <button data-tab="grammar"><span>📖</span>Грамматика</button>
+</nav>
+<script>
+/* ===================== CONTENT ===================== */
+const TOPICS = [{"id": "basic", "ico": "👋", "name": "Базовые слова", "lvl": "A1", "words": [["hello", "привет", "Hello! How are you?"], ["goodbye", "до свидания", "Goodbye, see you tomorrow."], ["please", "пожалуйста", "Please help me."], ["thank you", "спасибо", "Thank you very much!"], ["yes", "да", "Yes, I agree."], ["no", "нет", "No, thank you."], ["sorry", "извините", "Sorry, I'm late."], ["excuse me", "простите (обращение)", "Excuse me, where is the bank?"], ["friend", "друг", "He is my best friend."], ["name", "имя", "What is your name?"], ["question", "вопрос", "I have a question."], ["answer", "ответ", "That is the right answer."], ["today", "сегодня", "Today is Monday."], ["tomorrow", "завтра", "See you tomorrow."], ["yesterday", "вчера", "I was at home yesterday."], ["always", "всегда", "I always drink tea."], ["never", "никогда", "I never smoke."], ["sometimes", "иногда", "Sometimes I go to the gym."], ["often", "часто", "I often read books."], ["very", "очень", "It's very good."], ["here", "здесь", "I live here."], ["there", "там", "Put it there."], ["with", "с", "I live with my parents."], ["without", "без", "Coffee without sugar."], ["and", "и", "Tea and coffee."], ["but", "но", "I'm tired, but happy."], ["because", "потому что", "I'm late because of traffic."], ["maybe", "может быть", "Maybe tomorrow."], ["of course", "конечно", "Of course, I can help."], ["everything", "всё", "Everything is fine."], ["also", "тоже / также", "I also want to go."], ["too", "тоже (в конце) / слишком", "Me too."], ["only", "только", "Only one."], ["all", "все / всё", "All my friends."], ["some", "немного / некоторые", "Some water, please."], ["many", "много (исчисл.)", "Many people."], ["much", "много (неисчисл.)", "Not much time."], ["a lot", "много", "Thanks a lot!"], ["again", "снова", "Try again."], ["together", "вместе", "Let's go together."]]}, {"id": "pron", "ico": "🙋", "name": "Вопросы и местоимения", "lvl": "A1", "words": [["I", "я", "I am from Kazakhstan."], ["you", "ты / вы", "You are right."], ["he", "он", "He is my brother."], ["she", "она", "She is a nurse."], ["it", "оно / это", "It is cold."], ["we", "мы", "We are friends."], ["they", "они", "They live in Almaty."], ["my", "мой", "This is my phone."], ["your", "твой / ваш", "Is this your bag?"], ["his", "его", "His car is red."], ["her", "её", "Her name is Aida."], ["our", "наш", "Our house is small."], ["their", "их", "Their son is a student."], ["what", "что / какой", "What is this?"], ["who", "кто", "Who is that man?"], ["where", "где / куда", "Where do you live?"], ["when", "когда", "When is your birthday?"], ["why", "почему", "Why are you sad?"], ["how", "как", "How are you?"], ["how much", "сколько (стоит)", "How much is it?"], ["how many", "сколько (штук)", "How many brothers do you have?"], ["which", "который", "Which color do you like?"], ["this", "этот / это", "This is my room."], ["that", "тот / то", "That is a good idea."], ["something", "что-то", "I want something to eat."], ["someone", "кто-то", "Someone is at the door."], ["nothing", "ничего", "I know nothing about it."], ["nobody", "никто", "Nobody is here."]]}, {"id": "numbers", "ico": "🔢", "name": "Числа", "lvl": "A1", "words": [["one", "один", "I have one sister."], ["two", "два", "Two coffees, please."], ["three", "три", "Three days ago."], ["four", "четыре", "Four people."], ["five", "пять", "Five minutes."], ["six", "шесть", "At six o'clock."], ["seven", "семь", "Seven days a week."], ["eight", "восемь", "I sleep eight hours."], ["nine", "девять", "Nine o'clock."], ["ten", "десять", "Ten dollars."], ["eleven", "одиннадцать", "Eleven players."], ["twelve", "двенадцать", "Twelve months."], ["thirteen", "тринадцать", "She is thirteen."], ["fifteen", "пятнадцать", "Fifteen minutes."], ["twenty", "двадцать", "I'm twenty years old."], ["thirty", "тридцать", "Thirty days."], ["forty", "сорок", "Forty students."], ["fifty", "пятьдесят", "Fifty percent."], ["hundred", "сто", "A hundred people."], ["thousand", "тысяча", "A thousand tenge."], ["million", "миллион", "A million dollars."], ["first", "первый", "My first day."], ["second", "второй / секунда", "Wait a second."], ["third", "третий", "The third floor."], ["number", "число / номер", "What is your phone number?"]]}, {"id": "time", "ico": "⏰", "name": "Время и дни", "lvl": "A1", "words": [["morning", "утро", "Good morning!"], ["afternoon", "день (после обеда)", "Good afternoon!"], ["evening", "вечер", "See you in the evening."], ["night", "ночь", "Good night!"], ["day", "день", "Have a nice day!"], ["week", "неделя", "Once a week."], ["month", "месяц", "Next month."], ["year", "год", "Happy New Year!"], ["hour", "час", "Wait one hour."], ["minute", "минута", "Five minutes, please."], ["Monday", "понедельник", "See you on Monday."], ["Tuesday", "вторник", "I work on Tuesday."], ["Wednesday", "среда", "The meeting is on Wednesday."], ["Thursday", "четверг", "Thursday is a busy day."], ["Friday", "пятница", "Friday night!"], ["Saturday", "суббота", "I sleep late on Saturday."], ["Sunday", "воскресенье", "Sunday is my day off."], ["weekend", "выходные", "Have a good weekend!"], ["early", "рано", "I get up early."], ["late", "поздно", "It's too late."], ["now", "сейчас", "I'm busy now."], ["later", "позже", "Call me later."], ["soon", "скоро", "See you soon."], ["ago", "назад", "Two years ago."], ["o'clock", "ровно (о часах)", "It's five o'clock."], ["half", "половина", "Half past six."], ["spring", "весна", "Spring is beautiful."], ["summer", "лето", "Summer holidays."], ["autumn", "осень", "Leaves fall in autumn."], ["winter", "зима", "Winter is cold here."]]}, {"id": "colors", "ico": "🎨", "name": "Цвета", "lvl": "A1", "words": [["red", "красный", "A red car."], ["blue", "синий / голубой", "The sky is blue."], ["green", "зелёный", "Green grass."], ["yellow", "жёлтый", "A yellow banana."], ["black", "чёрный", "A black cat."], ["white", "белый", "White snow."], ["gray", "серый", "Gray clouds."], ["brown", "коричневый", "Brown eyes."], ["orange", "оранжевый / апельсин", "An orange T-shirt."], ["pink", "розовый", "A pink dress."], ["purple", "фиолетовый", "Purple flowers."], ["dark", "тёмный", "Dark blue."], ["light", "светлый / лёгкий", "Light green."], ["color", "цвет", "What color is it?"], ["beige", "бежевый", "A beige sofa."], ["gold", "золотой", "A gold ring."], ["silver", "серебряный", "A silver car."], ["navy", "тёмно-синий", "A navy suit."], ["turquoise", "бирюзовый", "Turquoise water."], ["violet", "фиолетовый (сиреневый)", "Violet flowers."], ["lilac", "сиреневый", "A lilac dress."], ["crimson", "малиновый (тёмно-красный)", "A crimson sunset."], ["maroon", "бордовый", "A maroon jacket."], ["burgundy", "бордо (винный)", "Burgundy shoes."], ["scarlet", "алый", "A scarlet rose."], ["olive", "оливковый", "An olive shirt."], ["mint", "мятный", "Mint green walls."], ["lime", "лаймовый (ярко-зелёный)", "A lime T-shirt."], ["emerald", "изумрудный", "Emerald eyes."], ["cream", "кремовый", "A cream blouse."], ["ivory", "цвет слоновой кости", "Ivory curtains."], ["peach", "персиковый", "Peach color."], ["coral", "коралловый", "Coral lipstick."], ["khaki", "хаки", "Khaki trousers."], ["indigo", "индиго", "An indigo sky."], ["cyan", "циан (голубой)", "Cyan ink."], ["magenta", "пурпурный (маджента)", "Magenta and cyan."], ["pale", "бледный", "Pale blue."], ["bright", "яркий", "Bright colors."], ["dull", "тусклый", "A dull color."], ["striped", "полосатый", "A striped shirt."], ["spotted", "в горошек / пятнистый", "A spotted dress."], ["plain", "однотонный / простой", "A plain T-shirt."], ["shade", "оттенок", "A darker shade of blue."]]}, {"id": "family", "ico": "👨‍👩‍👧", "name": "Семья и люди", "lvl": "A1", "words": [["mother", "мама", "My mother is a cook."], ["father", "папа", "My father works a lot."], ["brother", "брат", "I have one brother."], ["sister", "сестра", "My sister is older than me."], ["son", "сын", "Their son is five."], ["daughter", "дочь", "She has a daughter."], ["parents", "родители", "My parents live in Almaty."], ["child", "ребёнок", "The child is sleeping."], ["children", "дети", "They have three children."], ["husband", "муж", "Her husband is a doctor."], ["wife", "жена", "His wife is kind."], ["grandmother", "бабушка", "My grandmother bakes bread."], ["grandfather", "дедушка", "My grandfather is 80."], ["uncle", "дядя", "My uncle lives in Astana."], ["aunt", "тётя", "My aunt is a teacher."], ["cousin", "двоюродный брат/сестра", "My cousin is my age."], ["baby", "малыш", "The baby is crying."], ["boy", "мальчик", "A little boy."], ["girl", "девочка", "The girl is smart."], ["man", "мужчина", "That man is tall."], ["woman", "женщина", "The woman is smiling."], ["people", "люди", "Many people are here."], ["neighbor", "сосед", "Our neighbor is friendly."], ["married", "женат / замужем", "Are you married?"], ["family", "семья", "I love my family."]]}, {"id": "body", "ico": "🧍", "name": "Тело", "lvl": "A1", "words": [["head", "голова", "My head hurts."], ["face", "лицо", "Wash your face."], ["eye", "глаз", "She has blue eyes."], ["ear", "ухо", "I have big ears."], ["nose", "нос", "My nose is cold."], ["mouth", "рот", "Open your mouth."], ["tooth", "зуб", "I have a bad tooth."], ["teeth", "зубы", "Brush your teeth."], ["hair", "волосы", "She has long hair."], ["hand", "рука (кисть)", "Raise your hand."], ["arm", "рука (вся)", "My arm is broken."], ["finger", "палец", "I cut my finger."], ["leg", "нога", "My leg hurts."], ["foot", "ступня", "My foot is cold."], ["back", "спина", "My back hurts."], ["stomach", "живот", "My stomach hurts."], ["heart", "сердце", "Her heart is beating fast."], ["neck", "шея", "A long neck."], ["shoulder", "плечо", "My shoulder hurts."], ["knee", "колено", "I hurt my knee."], ["body", "тело", "A healthy body."]]}, {"id": "food", "ico": "🍎", "name": "Еда", "lvl": "A1", "words": [["bread", "хлеб", "I buy bread every day."], ["apple", "яблоко", "An apple a day."], ["meat", "мясо", "I don't eat meat."], ["chicken", "курица", "Chicken with rice."], ["beef", "говядина", "Beef is expensive."], ["fish", "рыба", "Fish is healthy."], ["egg", "яйцо", "I had two eggs for breakfast."], ["cheese", "сыр", "I love cheese."], ["butter", "сливочное масло", "Bread and butter."], ["rice", "рис", "Rice with chicken."], ["potato", "картофель", "Fried potatoes."], ["tomato", "помидор", "A tomato salad."], ["cucumber", "огурец", "Fresh cucumbers."], ["onion", "лук", "Cut the onion."], ["carrot", "морковь", "Carrots are good for your eyes."], ["vegetables", "овощи", "Eat more vegetables."], ["fruit", "фрукты", "Fresh fruit."], ["banana", "банан", "A yellow banana."], ["grapes", "виноград", "Green grapes."], ["soup", "суп", "This soup is hot."], ["salad", "салат", "A Greek salad."], ["cake", "торт", "Birthday cake."], ["chocolate", "шоколад", "I like dark chocolate."], ["sugar", "сахар", "Tea without sugar, please."], ["salt", "соль", "Pass me the salt."], ["pepper", "перец", "Salt and pepper."], ["breakfast", "завтрак", "Breakfast is ready."], ["lunch", "обед", "Let's have lunch."], ["dinner", "ужин", "We have dinner at seven."], ["hungry", "голодный", "I am very hungry."], ["delicious", "вкусный", "The food is delicious."]]}, {"id": "drinks", "ico": "☕", "name": "Напитки и кафе", "lvl": "A1", "words": [["water", "вода", "Can I have some water?"], ["tea", "чай", "Black tea, please."], ["coffee", "кофе", "A cup of coffee."], ["milk", "молоко", "The milk is cold."], ["juice", "сок", "Orange juice."], ["cup", "чашка", "A cup of tea."], ["glass", "стакан", "A glass of water."], ["bottle", "бутылка", "A bottle of water."], ["thirsty", "хочет пить", "I'm thirsty."], ["menu", "меню", "Can I see the menu?"], ["waiter", "официант", "The waiter is coming."], ["bill", "счёт", "Can I have the bill, please?"], ["order", "заказывать / заказ", "I'd like to order."], ["table", "стол", "A table for two."], ["spoon", "ложка", "A spoon for soup."], ["fork", "вилка", "A knife and fork."], ["knife", "нож", "This knife is sharp."], ["plate", "тарелка", "An empty plate."], ["tip", "чаевые", "Leave a tip."]]}, {"id": "home", "ico": "🏡", "name": "Дом", "lvl": "A1", "words": [["house", "дом", "They live in a big house."], ["flat", "квартира", "I rent a flat."], ["room", "комната", "My room is small."], ["kitchen", "кухня", "Mom is in the kitchen."], ["bedroom", "спальня", "The bedroom is upstairs."], ["bathroom", "ванная", "The bathroom is free."], ["toilet", "туалет", "Where is the toilet?"], ["door", "дверь", "Close the door, please."], ["window", "окно", "Open the window."], ["table", "стол", "The keys are on the table."], ["chair", "стул", "Sit on the chair."], ["bed", "кровать", "I go to bed at eleven."], ["sofa", "диван", "A comfortable sofa."], ["fridge", "холодильник", "Put it in the fridge."], ["lamp", "лампа", "Turn on the lamp."], ["key", "ключ", "I lost my key."], ["floor", "пол / этаж", "I live on the third floor."], ["wall", "стена", "The wall is white."], ["roof", "крыша", "The roof is old."], ["stairs", "лестница", "Go up the stairs."], ["garden", "сад", "We have a small garden."], ["clean", "чистый / убирать", "I clean my room on Sunday."], ["dirty", "грязный", "The dishes are dirty."], ["wash", "мыть", "Wash your hands."]]}, {"id": "clothes", "ico": "👕", "name": "Одежда", "lvl": "A1", "words": [["clothes", "одежда", "New clothes."], ["shirt", "рубашка", "A white shirt."], ["T-shirt", "футболка", "A cotton T-shirt."], ["trousers", "брюки", "Black trousers."], ["jeans", "джинсы", "Blue jeans."], ["dress", "платье", "A beautiful dress."], ["skirt", "юбка", "A short skirt."], ["jacket", "куртка", "Take your jacket."], ["coat", "пальто", "A warm coat."], ["sweater", "свитер", "A wool sweater."], ["shoes", "обувь / туфли", "New shoes."], ["boots", "ботинки / сапоги", "Winter boots."], ["hat", "шляпа / шапка", "Put on your hat."], ["socks", "носки", "A pair of socks."], ["bag", "сумка", "My bag is heavy."], ["glasses", "очки", "I wear glasses."], ["size", "размер", "What size do you wear?"], ["wear", "носить (одежду)", "I wear jeans every day."], ["put on", "надевать", "Put on your coat."], ["take off", "снимать", "Take off your shoes."]]}, {"id": "city", "ico": "🏙️", "name": "Город", "lvl": "A1", "words": [["city", "город", "Almaty is a beautiful city."], ["street", "улица", "The shop is on this street."], ["shop", "магазин", "The shop is closed."], ["supermarket", "супермаркет", "I go to the supermarket."], ["market", "рынок", "Fresh fruit at the market."], ["bank", "банк", "The bank opens at nine."], ["hospital", "больница", "He is in hospital."], ["pharmacy", "аптека", "Is there a pharmacy near here?"], ["school", "школа", "My school is near."], ["park", "парк", "Let's walk in the park."], ["cinema", "кинотеатр", "Let's go to the cinema."], ["restaurant", "ресторан", "A nice restaurant."], ["cafe", "кафе", "Meet me at the cafe."], ["station", "вокзал / станция", "The bus station."], ["bridge", "мост", "An old bridge."], ["building", "здание", "A tall building."], ["center", "центр", "The city center."], ["corner", "угол", "On the corner."], ["square", "площадь", "The main square."], ["police", "полиция", "Call the police!"], ["post office", "почта", "Where is the post office?"]]}, {"id": "weather", "ico": "🌤️", "name": "Погода", "lvl": "A1", "words": [["weather", "погода", "What's the weather like?"], ["sun", "солнце", "The sun is shining."], ["sunny", "солнечно", "It's sunny today."], ["rain", "дождь", "I don't like rain."], ["rainy", "дождливо", "A rainy day."], ["snow", "снег", "Snow in the mountains."], ["wind", "ветер", "A strong wind."], ["windy", "ветрено", "It's windy outside."], ["cloud", "облако", "White clouds."], ["cloudy", "облачно", "It's cloudy."], ["hot", "жарко / горячий", "It's hot outside."], ["warm", "тепло", "A warm day."], ["cool", "прохладно / круто", "It's cool in the evening."], ["cold", "холодно", "The water is cold."], ["degree", "градус", "It's 20 degrees."], ["storm", "шторм / гроза", "A big storm."], ["ice", "лёд", "Be careful, there's ice."], ["umbrella", "зонт", "Take an umbrella."]]}, {"id": "animals", "ico": "🐶", "name": "Животные", "lvl": "A1", "words": [["dog", "собака", "I have a dog."], ["cat", "кошка", "The cat is sleeping."], ["horse", "лошадь", "He rides a horse."], ["cow", "корова", "A cow gives milk."], ["sheep", "овца", "Many sheep."], ["chicken", "курица", "Chickens and eggs."], ["bird", "птица", "A small bird."], ["fish", "рыба", "Fish live in water."], ["mouse", "мышь", "A little mouse."], ["rabbit", "кролик", "A white rabbit."], ["pig", "свинья", "A pink pig."], ["bear", "медведь", "A big brown bear."], ["wolf", "волк", "A gray wolf."], ["fox", "лиса", "A clever fox."], ["lion", "лев", "The lion is the king."], ["monkey", "обезьяна", "A funny monkey."], ["camel", "верблюд", "Camels live in the desert."], ["eagle", "орёл", "An eagle in the sky."], ["snake", "змея", "Be careful, a snake!"], ["pet", "домашнее животное", "Do you have a pet?"]]}, {"id": "verbs", "ico": "🏃", "name": "Главные глаголы", "lvl": "A1", "words": [["be", "быть", "I want to be a developer."], ["have", "иметь", "I have a car."], ["do", "делать", "What do you do?"], ["go", "идти / ехать", "Let's go home."], ["come", "приходить", "Come here, please."], ["see", "видеть", "I see a bird."], ["look", "смотреть", "Look at this!"], ["watch", "смотреть (ТВ, видео)", "I watch films."], ["listen", "слушать", "Listen to me."], ["hear", "слышать", "I can't hear you."], ["want", "хотеть", "I want coffee."], ["like", "нравиться", "I like music."], ["love", "любить", "I love my family."], ["need", "нуждаться", "I need help."], ["know", "знать", "I don't know."], ["think", "думать", "I think so."], ["say", "сказать", "What did you say?"], ["tell", "рассказать", "Tell me about it."], ["speak", "говорить", "Do you speak English?"], ["talk", "разговаривать", "Let's talk."], ["ask", "спрашивать", "Can I ask you?"], ["give", "давать", "Give me the pen."], ["take", "брать", "Take an umbrella."], ["buy", "покупать", "I want to buy a phone."], ["sell", "продавать", "They sell cars."], ["pay", "платить", "Can I pay by card?"], ["make", "делать / создавать", "I make websites."], ["eat", "есть", "Let's eat."], ["drink", "пить", "Drink some water."], ["sleep", "спать", "I sleep eight hours."], ["understand", "понимать", "I understand you."], ["help", "помогать", "Can you help me?"], ["wait", "ждать", "Wait a minute."], ["open", "открывать", "Open the door."], ["close", "закрывать", "Close the window."], ["read", "читать", "I read every day."], ["write", "писать", "Write your name."], ["live", "жить", "I live in Almaty."], ["work", "работать", "I work from home."], ["play", "играть", "Let's play football."]]}, {"id": "adj", "ico": "✨", "name": "Прилагательные", "lvl": "A1", "words": [["big", "большой", "A big dog."], ["small", "маленький", "A small car."], ["good", "хороший", "Good job!"], ["bad", "плохой", "Bad weather today."], ["new", "новый", "I have a new phone."], ["old", "старый", "This is an old book."], ["young", "молодой", "She is young."], ["happy", "счастливый", "I'm happy to see you."], ["sad", "грустный", "Why are you sad?"], ["fast", "быстрый", "He runs fast."], ["slow", "медленный", "The internet is slow."], ["beautiful", "красивый", "What a beautiful day!"], ["ugly", "некрасивый", "An ugly building."], ["tall", "высокий (рост)", "He is very tall."], ["short", "короткий / низкий", "A short story."], ["long", "длинный", "A long road."], ["tired", "уставший", "I'm so tired."], ["busy", "занятой", "I'm busy now."], ["free", "свободный / бесплатный", "Are you free tonight?"], ["easy", "лёгкий", "This task is easy."], ["difficult", "трудный", "The exam was difficult."], ["right", "правильный", "You are right."], ["wrong", "неправильный", "That's wrong."], ["full", "полный", "The bus is full."], ["empty", "пустой", "The room is empty."], ["rich", "богатый", "A rich man."], ["poor", "бедный", "A poor family."], ["same", "такой же", "We have the same phone."], ["different", "разный", "We are very different."], ["important", "важный", "This is important."]]}, {"id": "phrases", "ico": "💬", "name": "Полезные фразы", "lvl": "A1", "words": [["How are you?", "Как дела?", "— How are you? — I'm fine, thanks."], ["Nice to meet you", "Приятно познакомиться", "Hi, I'm Arman. Nice to meet you."], ["What's up?", "Как жизнь? Что нового?", "Hey, what's up?"], ["I don't understand", "Я не понимаю", "Sorry, I don't understand."], ["Can you repeat?", "Можете повторить?", "Can you repeat, please?"], ["Speak slowly, please", "Говорите медленнее, пожалуйста", "I'm learning English. Speak slowly, please."], ["What does it mean?", "Что это значит?", "What does this word mean?"], ["How do you say...?", "Как сказать...?", "How do you say «спасибо» in English?"], ["I'm not sure", "Я не уверен", "I'm not sure, maybe."], ["No problem", "Без проблем", "— Thanks! — No problem."], ["You're welcome", "Пожалуйста (в ответ)", "— Thank you! — You're welcome."], ["Never mind", "Ничего страшного / Неважно", "Never mind, it's okay."], ["Good luck", "Удачи", "Good luck on your exam!"], ["See you later", "Увидимся", "Bye, see you later!"], ["Take care", "Береги себя", "Take care, bye!"], ["Let me know", "Дай знать", "Let me know when you're ready."], ["I agree", "Я согласен", "Yes, I agree with you."], ["I'm sorry to hear that", "Мне жаль это слышать", "I'm sorry to hear that."], ["It doesn't matter", "Неважно", "It doesn't matter."], ["Just a moment", "Минутку", "Just a moment, please."], ["Could you help me?", "Не могли бы вы мне помочь?", "Excuse me, could you help me?"], ["I'd like...", "Я бы хотел...", "I'd like a coffee, please."], ["Can I have...?", "Можно мне...?", "Can I have the bill?"], ["Is it far from here?", "Это далеко отсюда?", "Is the station far from here?"], ["How long does it take?", "Сколько это займёт?", "How long does it take to get there?"], ["What do you mean?", "Что ты имеешь в виду?", "Sorry, what do you mean?"], ["I mean...", "Я имею в виду...", "I mean, it's not bad."], ["Hold on", "Подожди / Не клади трубку", "Hold on, I'll check."], ["I'm just looking", "Я просто смотрю", "— Can I help you? — I'm just looking, thanks."], ["Can I pay by card?", "Можно оплатить картой?", "Can I pay by card here?"], ["Does it come with...?", "Это идёт с...?", "Does it come with fries?"], ["I'm full", "Я наелся", "No more, thanks. I'm full."], ["Cheers!", "Будем! / Спасибо (разг.)", "Cheers, everyone!"], ["Bless you", "Будь здоров (при чихании)", "— Achoo! — Bless you!"], ["Congratulations!", "Поздравляю!", "Congratulations on your new job!"], ["Happy birthday!", "С днём рождения!", "Happy birthday, mom!"], ["Have a nice day", "Хорошего дня", "Thanks! Have a nice day."], ["Same to you", "И тебе того же", "— Have a good weekend! — Same to you!"], ["Don't worry", "Не волнуйся", "Don't worry, it's fine."], ["I've got it", "Понял", "Okay, I've got it."], ["Got it?", "Понятно?", "Turn left at the bank. Got it?"], ["Are you kidding?", "Ты шутишь?", "You won? Are you kidding?"], ["I'm kidding", "Я шучу", "Relax, I'm kidding."], ["What happened?", "Что случилось?", "You look sad. What happened?"], ["It's my fault", "Это моя вина", "Sorry, it's my fault."], ["Whatever you want", "Как хочешь", "We can go wherever you want."], ["Let me think", "Дай подумать", "Hmm, let me think."], ["That makes sense", "Это логично", "Oh, that makes sense."], ["I can't wait", "Не могу дождаться", "I can't wait for summer!"], ["What a pity!", "Как жаль!", "You can't come? What a pity!"], ["Long time no see", "Сто лет не виделись", "Hey! Long time no see!"], ["How's it going?", "Как оно? Как дела?", "Hi Dana, how's it going?"], ["Not bad", "Неплохо", "— How are you? — Not bad."], ["Excuse me?", "Простите? (не расслышал)", "Excuse me? Can you say that again?"], ["Here you are", "Вот, пожалуйста (даю)", "Here you are, your coffee."], ["After you", "После вас (пропускаю)", "Please, after you."], ["Help yourself", "Угощайся", "There's food in the fridge. Help yourself."], ["What's wrong?", "Что не так?", "What's wrong with you today?"], ["Watch out!", "Осторожно!", "Watch out! A car!"]]}, {"id": "travel", "ico": "✈️", "name": "Путешествия", "lvl": "A2", "words": [["travel", "путешествовать", "I love to travel."], ["trip", "поездка", "A business trip."], ["ticket", "билет", "Two tickets, please."], ["airport", "аэропорт", "We are at the airport."], ["flight", "рейс / полёт", "My flight is at 6 a.m."], ["plane", "самолёт", "The plane is late."], ["train", "поезд", "The train is late."], ["bus", "автобус", "I go to work by bus."], ["taxi", "такси", "Let's take a taxi."], ["hotel", "отель", "The hotel is near the sea."], ["passport", "паспорт", "Show me your passport."], ["visa", "виза", "Do I need a visa?"], ["luggage", "багаж", "My luggage is heavy."], ["suitcase", "чемодан", "Pack your suitcase."], ["map", "карта", "Do you have a map?"], ["left", "налево", "Turn left."], ["right", "направо", "Turn right at the bank."], ["straight", "прямо", "Go straight ahead."], ["near", "рядом", "Is it near here?"], ["far", "далеко", "The station is far."], ["money", "деньги", "I don't have money."], ["abroad", "за границей", "I want to work abroad."], ["book", "бронировать / книга", "I booked a room."], ["arrive", "прибывать", "We arrive at noon."], ["leave", "уезжать / оставлять", "The bus leaves at five."], ["delay", "задержка", "There is a two-hour delay."], ["departure", "отправление", "Departure time is 10:30."], ["sightseeing", "осмотр достопримечательностей", "We went sightseeing."], ["tourist", "турист", "Many tourists in summer."], ["border", "граница", "We crossed the border."]]}, {"id": "transport", "ico": "🚗", "name": "Транспорт", "lvl": "A2", "words": [["car", "машина", "I have an old car."], ["drive", "водить", "Can you drive?"], ["driver", "водитель", "The driver is waiting."], ["bike", "велосипед", "I ride a bike."], ["subway", "метро", "Take the subway."], ["stop", "остановка / останавливаться", "The next stop is mine."], ["road", "дорога", "The road is long."], ["traffic", "пробка / движение", "There is a lot of traffic."], ["traffic light", "светофор", "Stop at the traffic light."], ["parking", "парковка", "Is there parking here?"], ["fuel", "топливо", "We need fuel."], ["seat", "место / сиденье", "Is this seat free?"], ["ride", "ехать / поездка", "A short ride."], ["walk", "идти пешком / прогулка", "I walk to work."], ["catch", "успеть на / поймать", "I need to catch the bus."], ["miss", "опоздать на / скучать", "I missed the train."], ["get on", "сесть (в транспорт)", "Get on the bus here."], ["get off", "выйти (из транспорта)", "Get off at the next stop."], ["accident", "авария", "There was an accident."], ["license", "права / лицензия", "A driver's license."]]}, {"id": "shopping", "ico": "🛍️", "name": "Покупки", "lvl": "A2", "words": [["price", "цена", "What's the price?"], ["cost", "стоить", "How much does it cost?"], ["cheap", "дешёвый", "The bus is cheap."], ["expensive", "дорогой", "This hotel is expensive."], ["sale", "распродажа", "Everything is on sale."], ["discount", "скидка", "Is there a discount?"], ["cash", "наличные", "Can I pay in cash?"], ["card", "карта", "I'll pay by card."], ["change", "сдача / менять", "Keep the change."], ["receipt", "чек", "Can I have a receipt?"], ["customer", "покупатель", "The customer is always right."], ["seller", "продавец", "Ask the seller."], ["try on", "примерять", "Can I try it on?"], ["fit", "подходить по размеру", "These shoes fit well."], ["return", "возвращать", "I want to return this."], ["choose", "выбирать", "Choose a color."], ["delivery", "доставка", "Free delivery."], ["order", "заказ", "Your order is ready."], ["cart", "корзина", "Add to cart."], ["brand", "бренд", "A famous brand."], ["quality", "качество", "Good quality."], ["gift", "подарок", "A gift for my mom."]]}, {"id": "health", "ico": "🩺", "name": "Здоровье", "lvl": "A2", "words": [["doctor", "врач", "I need a doctor."], ["nurse", "медсестра", "The nurse is kind."], ["sick", "больной", "I feel sick."], ["ill", "болен", "He is ill today."], ["pain", "боль", "I have a pain in my back."], ["hurt", "болеть / ранить", "My leg hurts."], ["headache", "головная боль", "I have a headache."], ["fever", "температура (жар)", "She has a fever."], ["cold", "простуда", "I have a cold."], ["cough", "кашель", "A bad cough."], ["medicine", "лекарство", "Take this medicine."], ["pill", "таблетка", "Take one pill a day."], ["appointment", "приём (у врача)", "I have an appointment at 3."], ["healthy", "здоровый", "Eat healthy food."], ["rest", "отдыхать", "You need to rest."], ["feel", "чувствовать", "How do you feel?"], ["better", "лучше", "I feel better."], ["worse", "хуже", "It's getting worse."], ["blood", "кровь", "A blood test."], ["emergency", "экстренный случай", "Call emergency!"], ["sport", "спорт", "I do sport every day."], ["diet", "диета", "I'm on a diet."]]}, {"id": "work", "ico": "💼", "name": "Работа", "lvl": "A2", "words": [["job", "работа", "I'm looking for a job."], ["boss", "начальник", "My boss is strict."], ["colleague", "коллега", "My colleagues are friendly."], ["office", "офис", "I work in an office."], ["company", "компания", "A big company."], ["salary", "зарплата", "The salary is good."], ["meeting", "встреча", "The meeting starts at ten."], ["email", "письмо (эл.)", "I sent you an email."], ["task", "задача", "I have many tasks."], ["project", "проект", "A new project."], ["deadline", "крайний срок", "The deadline is Friday."], ["skill", "навык", "English is a useful skill."], ["experience", "опыт", "I have two years of experience."], ["interview", "собеседование", "I have an interview tomorrow."], ["resume", "резюме", "Send me your resume."], ["apply", "подавать заявку", "I applied for the job."], ["hire", "нанимать", "They hired me!"], ["fire", "увольнять", "He was fired."], ["quit", "уволиться / бросить", "I quit my job."], ["internship", "стажировка", "A paid internship."], ["part-time", "неполный день", "A part-time job."], ["full-time", "полный день", "A full-time position."], ["customer", "клиент", "Talk to the customer."], ["earn", "зарабатывать", "I earn money online."], ["schedule", "расписание / график", "A flexible schedule."], ["team", "команда", "We are a great team."], ["manager", "менеджер", "Ask the manager."]]}, {"id": "study", "ico": "🎓", "name": "Учёба", "lvl": "A2", "words": [["learn", "учить(ся)", "I learn English every day."], ["study", "учиться / изучать", "I study at university."], ["teach", "преподавать", "She teaches math."], ["teacher", "учитель", "Our teacher is strict."], ["student", "студент", "I'm a student."], ["lesson", "урок", "The lesson starts at 9."], ["class", "класс / занятие", "English class."], ["homework", "домашнее задание", "Did you do your homework?"], ["exam", "экзамен", "I passed the exam."], ["test", "тест", "A short test."], ["mistake", "ошибка", "Everyone makes mistakes."], ["practice", "практика / практиковаться", "Practice every day."], ["remember", "помнить", "I remember this word."], ["forget", "забывать", "Don't forget!"], ["word", "слово", "A new word."], ["sentence", "предложение", "Read the sentence."], ["language", "язык", "English is a global language."], ["grammar", "грамматика", "Grammar is important."], ["pronunciation", "произношение", "Your pronunciation is good."], ["dictionary", "словарь", "Check the dictionary."], ["university", "университет", "I want to go to university."], ["degree", "степень (диплом)", "A degree in IT."], ["pass", "сдать", "I passed the test."], ["fail", "провалить", "I failed the exam."]]}, {"id": "feelings", "ico": "😊", "name": "Чувства", "lvl": "A2", "words": [["feeling", "чувство", "A strange feeling."], ["glad", "рад", "I'm glad to hear that."], ["angry", "злой", "Don't be angry."], ["afraid", "боящийся", "I'm afraid of dogs."], ["scared", "напуганный", "I was scared."], ["worried", "обеспокоенный", "I'm worried about the exam."], ["nervous", "нервный", "I'm nervous before interviews."], ["bored", "скучающий", "I'm bored."], ["boring", "скучный", "A boring film."], ["excited", "взволнованный (радостно)", "I'm excited about the trip!"], ["surprised", "удивлённый", "I was surprised."], ["lonely", "одинокий", "He feels lonely."], ["proud", "гордый", "I'm proud of you."], ["calm", "спокойный", "Stay calm."], ["upset", "расстроенный", "She is upset."], ["jealous", "ревнивый / завистливый", "Don't be jealous."], ["embarrassed", "смущённый", "I was so embarrassed."], ["confident", "уверенный", "Be confident!"], ["relaxed", "расслабленный", "I feel relaxed."], ["hope", "надеяться / надежда", "I hope you're well."], ["miss", "скучать", "I miss you."]]}, {"id": "hobbies", "ico": "⚽", "name": "Хобби и спорт", "lvl": "A2", "words": [["hobby", "хобби", "What's your hobby?"], ["music", "музыка", "I listen to music."], ["song", "песня", "A beautiful song."], ["film", "фильм", "A good film."], ["game", "игра", "A video game."], ["football", "футбол", "I play football."], ["basketball", "баскетбол", "He plays basketball."], ["swim", "плавать", "I can swim."], ["run", "бегать", "I run in the morning."], ["gym", "спортзал", "I go to the gym."], ["dance", "танцевать", "Let's dance!"], ["sing", "петь", "She sings well."], ["draw", "рисовать", "I like to draw."], ["photo", "фото", "Take a photo."], ["cook", "готовить", "I cook dinner."], ["fishing", "рыбалка", "My dad loves fishing."], ["team", "команда", "My favorite team."], ["win", "выигрывать", "We won the game!"], ["lose", "проигрывать / терять", "They lost."], ["match", "матч", "A football match."], ["player", "игрок", "A good player."], ["practice", "тренироваться", "I practice every day."], ["free time", "свободное время", "In my free time I read."]]}, {"id": "nature", "ico": "🏔️", "name": "Природа", "lvl": "A2", "words": [["nature", "природа", "I love nature."], ["mountain", "гора", "The mountains are beautiful."], ["river", "река", "A long river."], ["lake", "озеро", "A clean lake."], ["sea", "море", "We swam in the sea."], ["ocean", "океан", "The Pacific Ocean."], ["forest", "лес", "A dark forest."], ["tree", "дерево", "A tall tree."], ["flower", "цветок", "Red flowers."], ["grass", "трава", "Green grass."], ["field", "поле", "A wheat field."], ["desert", "пустыня", "A hot desert."], ["island", "остров", "A small island."], ["beach", "пляж", "Let's go to the beach."], ["sky", "небо", "A blue sky."], ["star", "звезда", "Look at the stars."], ["moon", "луна", "A full moon."], ["earth", "земля", "Planet Earth."], ["air", "воздух", "Fresh air."], ["stone", "камень", "A big stone."], ["fire", "огонь", "Make a fire."]]}, {"id": "verbs2", "ico": "🔁", "name": "Глаголы — 2", "lvl": "A2", "words": [["begin", "начинать", "Let's begin."], ["start", "начинать", "The film starts at 8."], ["finish", "заканчивать", "I finished my work."], ["try", "пытаться / пробовать", "Try again."], ["use", "использовать", "Can I use your phone?"], ["find", "находить", "I can't find my keys."], ["lose", "терять", "I lost my wallet."], ["keep", "хранить / продолжать", "Keep calm."], ["bring", "приносить", "Bring your laptop."], ["send", "отправлять", "Send me a message."], ["get", "получать / становиться", "I got a message."], ["put", "класть", "Put it on the table."], ["show", "показывать", "Show me your photos."], ["call", "звонить / называть", "Call me later."], ["meet", "встречать", "Nice to meet you."], ["visit", "посещать", "Visit us!"], ["change", "менять", "I want to change my job."], ["move", "двигаться / переезжать", "We moved to Almaty."], ["turn", "поворачивать", "Turn left."], ["carry", "нести", "Carry this bag."], ["fall", "падать", "Don't fall!"], ["grow", "расти / выращивать", "Children grow fast."], ["build", "строить", "They built a house."], ["break", "ломать", "I broke my phone."], ["fix", "чинить", "Can you fix it?"], ["plan", "планировать", "We plan a trip."], ["decide", "решать", "I decided to stay."], ["believe", "верить", "I believe you."], ["agree", "соглашаться", "I agree with you."], ["feel", "чувствовать", "I feel good."]]}, {"id": "adj2", "ico": "🌈", "name": "Прилагательные — 2", "lvl": "A2", "words": [["clean", "чистый", "A clean room."], ["dirty", "грязный", "Dirty shoes."], ["quiet", "тихий", "A quiet place."], ["loud", "громкий", "Loud music."], ["heavy", "тяжёлый", "A heavy bag."], ["light", "лёгкий (вес)", "A light jacket."], ["strong", "сильный", "He is strong."], ["weak", "слабый", "A weak signal."], ["safe", "безопасный", "Is it safe here?"], ["dangerous", "опасный", "A dangerous road."], ["famous", "известный", "A famous singer."], ["popular", "популярный", "A popular app."], ["friendly", "дружелюбный", "Friendly people."], ["kind", "добрый", "You are very kind."], ["funny", "смешной", "A funny story."], ["interesting", "интересный", "An interesting book."], ["smart", "умный", "A smart girl."], ["stupid", "глупый", "A stupid mistake."], ["lazy", "ленивый", "Don't be lazy."], ["polite", "вежливый", "Be polite."], ["comfortable", "удобный", "Comfortable shoes."], ["modern", "современный", "A modern city."], ["possible", "возможный", "Is it possible?"], ["ready", "готовый", "I'm ready."], ["careful", "осторожный", "Be careful!"]]}, {"id": "situations", "ico": "🗺️", "name": "Фразы в ситуациях", "lvl": "A2", "words": [["I have a reservation", "У меня бронь", "Hello, I have a reservation for two nights."], ["Is breakfast included?", "Завтрак включён?", "Is breakfast included in the price?"], ["What time is check-out?", "Во сколько выезд?", "Excuse me, what time is check-out?"], ["Could I get a refund?", "Можно вернуть деньги?", "It's broken. Could I get a refund?"], ["Do you have this in another size?", "Есть другой размер?", "Do you have this in a smaller size?"], ["I'm allergic to nuts", "У меня аллергия на орехи", "Is there nuts in it? I'm allergic to nuts."], ["Can we split the bill?", "Можно разделить счёт?", "Can we split the bill, please?"], ["Keep the change", "Сдачи не надо", "Here's 5000. Keep the change."], ["I'd like to book a table", "Я хочу забронировать столик", "I'd like to book a table for four."], ["Could you take a photo of us?", "Сфотографируйте нас, пожалуйста", "Excuse me, could you take a photo of us?"], ["Which platform?", "С какой платформы?", "Which platform does the train leave from?"], ["I missed my stop", "Я проехал свою остановку", "Oh no, I missed my stop!"], ["Who's calling?", "Кто звонит?", "Hello, who's calling?"], ["Can I leave a message?", "Можно оставить сообщение?", "He's out. Can I leave a message?"], ["You've got the wrong number", "Вы ошиблись номером", "Sorry, you've got the wrong number."], ["The line is busy", "Линия занята", "I called, but the line is busy."], ["Tell me about yourself", "Расскажите о себе", "Let's start. Tell me about yourself."], ["What are your strengths?", "Ваши сильные стороны?", "What are your strengths and weaknesses?"], ["Why do you want this job?", "Почему вы хотите эту работу?", "So, why do you want this job?"], ["I'm a fast learner", "Я быстро учусь", "I don't have much experience, but I'm a fast learner."], ["When can you start?", "Когда вы можете начать?", "Great. When can you start?"], ["I'll get back to you", "Я вам отвечу позже", "Thanks, I'll get back to you tomorrow."], ["I'd rather not", "Я бы не хотел", "— Want to come? — I'd rather not."], ["Could you do me a favor?", "Можешь оказать услугу?", "Could you do me a favor and close the window?"], ["It's on me", "Я угощаю", "Put your money away — it's on me."], ["I'm running late", "Я опаздываю", "Sorry, I'm running late. 10 minutes."], ["I got lost", "Я заблудился", "Sorry I'm late, I got lost."], ["Where can I get a SIM card?", "Где купить сим-карту?", "Excuse me, where can I get a SIM card?"]]}, {"id": "tech", "ico": "💻", "name": "Технологии", "lvl": "B1", "words": [["computer", "компьютер", "My computer is slow."], ["laptop", "ноутбук", "I work on my laptop."], ["phone", "телефон", "My phone is dead."], ["screen", "экран", "A big screen."], ["keyboard", "клавиатура", "A wireless keyboard."], ["internet", "интернет", "The internet is down."], ["website", "сайт", "I made a website."], ["app", "приложение", "Download the app."], ["download", "скачивать", "Download the file."], ["upload", "загружать", "Upload a photo."], ["password", "пароль", "Forgot your password?"], ["account", "аккаунт / счёт", "Create an account."], ["sign up", "регистрироваться", "Sign up for free."], ["log in", "входить (в аккаунт)", "Log in with Google."], ["update", "обновление", "Install the update."], ["battery", "батарея", "Low battery."], ["charge", "заряжать", "I need to charge my phone."], ["file", "файл", "Save the file."], ["folder", "папка", "Open the folder."], ["search", "искать / поиск", "Search on Google."], ["link", "ссылка", "Send me the link."], ["message", "сообщение", "I got your message."], ["online", "онлайн", "I study online."], ["developer", "разработчик", "I'm a web developer."], ["code", "код", "Write clean code."], ["bug", "ошибка в программе", "Fix the bug."], ["data", "данные", "Save your data."], ["device", "устройство", "Any device."], ["software", "программы", "Install the software."], ["settings", "настройки", "Open settings."]]}, {"id": "business", "ico": "📈", "name": "Бизнес", "lvl": "B1", "words": [["business", "бизнес", "I want to start a business."], ["market", "рынок", "The market is growing."], ["product", "продукт", "A new product."], ["service", "услуга", "Customer service."], ["client", "клиент", "A new client."], ["price", "цена", "A fair price."], ["profit", "прибыль", "We made a profit."], ["loss", "убыток", "A big loss."], ["income", "доход", "A monthly income."], ["budget", "бюджет", "A small budget."], ["invest", "инвестировать", "Invest in yourself."], ["contract", "контракт", "Sign the contract."], ["offer", "предложение / предлагать", "A job offer."], ["deal", "сделка", "It's a deal!"], ["goal", "цель", "Set a goal."], ["strategy", "стратегия", "A marketing strategy."], ["growth", "рост", "Fast growth."], ["competition", "конкуренция", "Strong competition."], ["advertising", "реклама", "Online advertising."], ["brand", "бренд", "Build your brand."], ["startup", "стартап", "A tech startup."], ["owner", "владелец", "The shop owner."], ["partner", "партнёр", "A business partner."], ["negotiate", "вести переговоры", "Negotiate the price."], ["succeed", "добиваться успеха", "I want to succeed."], ["fail", "терпеть неудачу", "Don't be afraid to fail."]]}, {"id": "linking", "ico": "🔗", "name": "Связки и слова-переходы", "lvl": "B1", "words": [["however", "однако", "However, it's not easy."], ["therefore", "поэтому", "Therefore, we must wait."], ["although", "хотя", "Although it was late, I worked."], ["also", "также", "I also like tea."], ["besides", "кроме того", "Besides, it's cheap."], ["instead", "вместо этого", "Instead, I stayed home."], ["otherwise", "иначе", "Hurry, otherwise we'll be late."], ["so", "так что / поэтому", "I was tired, so I slept."], ["if", "если", "If you want, we can go."], ["unless", "если не", "I'll go unless it rains."], ["until", "до тех пор пока", "Wait until I come."], ["while", "пока / в то время как", "I listen to music while I work."], ["since", "с тех пор / так как", "I've lived here since 2020."], ["during", "во время", "During the lesson."], ["even", "даже", "Even my mom knows."], ["actually", "на самом деле", "Actually, I disagree."], ["probably", "вероятно", "It will probably rain."], ["finally", "наконец", "Finally, I'm home!"], ["anyway", "в любом случае", "Anyway, let's go."], ["already", "уже", "I've already done it."], ["still", "всё ещё", "I still love you."], ["yet", "ещё (в отриц.) / уже (в вопр.)", "Not yet."], ["almost", "почти", "I'm almost ready."], ["enough", "достаточно", "I have enough money."], ["especially", "особенно", "I love fruit, especially apples."], ["for example", "например", "For example, apples."], ["in fact", "на самом деле", "In fact, it's true."]]}, {"id": "phrasal", "ico": "🧱", "name": "Фразовые глаголы", "lvl": "B1", "words": [["get up", "вставать", "I get up at 7."], ["wake up", "просыпаться", "Wake up!"], ["give up", "сдаваться / бросать", "Never give up."], ["look for", "искать", "I'm looking for a job."], ["look after", "присматривать", "Look after your sister."], ["look forward to", "ждать с нетерпением", "I look forward to it."], ["find out", "выяснять", "Find out the truth."], ["turn on", "включать", "Turn on the light."], ["turn off", "выключать", "Turn off your phone."], ["pick up", "поднять / забрать", "I'll pick you up at 6."], ["set up", "настроить / основать", "Set up an account."], ["come back", "возвращаться", "Come back soon."], ["go on", "продолжать", "Go on, please."], ["go out", "выходить (гулять)", "Let's go out tonight."], ["fill in", "заполнять", "Fill in the form."], ["check in", "регистрироваться", "Check in at the hotel."], ["run out of", "заканчиваться (о запасе)", "We ran out of milk."], ["put off", "откладывать", "Don't put it off."], ["figure out", "разобраться", "I'll figure it out."], ["carry on", "продолжать", "Carry on working."], ["get along", "ладить", "We get along well."], ["make up", "помириться / выдумать", "They made up."], ["take care of", "заботиться", "Take care of yourself."], ["calm down", "успокоиться", "Calm down, please."], ["hang out", "тусоваться", "Let's hang out."], ["show up", "появиться", "He didn't show up."]]}, {"id": "abstract", "ico": "🧠", "name": "Абстрактные слова", "lvl": "B1", "words": [["idea", "идея", "Good idea!"], ["reason", "причина", "For this reason."], ["result", "результат", "Good results."], ["problem", "проблема", "No problem."], ["solution", "решение", "Find a solution."], ["chance", "шанс", "Give me a chance."], ["choice", "выбор", "It's your choice."], ["decision", "решение", "A hard decision."], ["opinion", "мнение", "In my opinion..."], ["advice", "совет", "Give me some advice."], ["future", "будущее", "Plan your future."], ["past", "прошлое", "Forget the past."], ["truth", "правда", "Tell me the truth."], ["lie", "ложь / лгать", "Don't lie."], ["dream", "мечта / сон", "Follow your dream."], ["success", "успех", "The key to success."], ["freedom", "свобода", "Freedom of speech."], ["life", "жизнь", "Enjoy your life."], ["mind", "ум / разум", "Change your mind."], ["memory", "память / воспоминание", "A good memory."], ["knowledge", "знания", "Knowledge is power."], ["effort", "усилие", "Make an effort."], ["habit", "привычка", "A good habit."], ["mood", "настроение", "I'm in a good mood."], ["attention", "внимание", "Pay attention."], ["patience", "терпение", "Have patience."]]}, {"id": "verbs3", "ico": "⚡", "name": "Глаголы — B1", "lvl": "B1", "words": [["achieve", "достигать", "Achieve your goals."], ["improve", "улучшать", "Improve your English."], ["increase", "увеличивать", "Prices increase."], ["reduce", "уменьшать", "Reduce stress."], ["create", "создавать", "Create something new."], ["develop", "развивать", "Develop your skills."], ["explain", "объяснять", "Explain it to me."], ["describe", "описывать", "Describe your room."], ["discuss", "обсуждать", "Let's discuss it."], ["compare", "сравнивать", "Compare the prices."], ["prefer", "предпочитать", "I prefer tea."], ["suggest", "предлагать", "I suggest we go."], ["recommend", "рекомендовать", "I recommend this book."], ["allow", "разрешать", "Smoking is not allowed."], ["avoid", "избегать", "Avoid mistakes."], ["expect", "ожидать", "I didn't expect that."], ["manage", "справляться / управлять", "I managed to do it."], ["prepare", "готовить(ся)", "Prepare for the exam."], ["provide", "предоставлять", "We provide services."], ["require", "требовать", "It requires time."], ["include", "включать (в состав)", "Price includes breakfast."], ["depend", "зависеть", "It depends."], ["mention", "упоминать", "Don't mention it."], ["realize", "осознавать", "I realized my mistake."], ["notice", "замечать", "I noticed a mistake."], ["complain", "жаловаться", "Don't complain."], ["apologize", "извиняться", "I apologize."], ["borrow", "брать взаймы", "Can I borrow your pen?"], ["lend", "давать взаймы", "Lend me some money."], ["waste", "тратить впустую", "Don't waste time."]]}, {"id": "adj3", "ico": "🎯", "name": "Прилагательные — B1", "lvl": "B1", "words": [["available", "доступный / свободный", "Is he available now?"], ["necessary", "необходимый", "It's not necessary."], ["useful", "полезный", "A useful skill."], ["useless", "бесполезный", "It's useless."], ["reliable", "надёжный", "A reliable friend."], ["honest", "честный", "Be honest."], ["serious", "серьёзный", "Are you serious?"], ["successful", "успешный", "A successful business."], ["responsible", "ответственный", "A responsible person."], ["confident", "уверенный", "Be confident."], ["creative", "творческий", "A creative idea."], ["huge", "огромный", "A huge house."], ["tiny", "крошечный", "A tiny room."], ["obvious", "очевидный", "It's obvious."], ["strange", "странный", "A strange noise."], ["amazing", "потрясающий", "That's amazing!"], ["awful", "ужасный", "Awful weather."], ["crazy", "сумасшедший", "That's crazy!"], ["certain", "определённый / уверенный", "I'm certain."], ["correct", "правильный", "The correct answer."], ["exact", "точный", "The exact time."], ["similar", "похожий", "Similar ideas."], ["local", "местный", "Local food."], ["international", "международный", "An international company."], ["private", "частный / личный", "A private school."], ["public", "общественный", "Public transport."]]}, {"id": "idioms", "ico": "🗣️", "name": "Разговорные выражения", "lvl": "B1", "words": [["It's up to you", "Решать тебе", "— Pizza or sushi? — It's up to you."], ["Piece of cake", "Проще простого", "The test was a piece of cake."], ["Break a leg", "Ни пуха ни пера", "Break a leg at your interview!"], ["Under the weather", "Неважно себя чувствую", "I'm a bit under the weather."], ["Hit the books", "Засесть за учёбу", "I need to hit the books tonight."], ["Call it a day", "На сегодня хватит", "Let's call it a day."], ["On the same page", "Понимаем друг друга одинаково", "Are we on the same page?"], ["Cost an arm and a leg", "Стоить целое состояние", "This phone cost an arm and a leg."], ["Better late than never", "Лучше поздно, чем никогда", "You came! Better late than never."], ["No way!", "Не может быть! / Ни за что!", "— I got the job! — No way!"], ["I'm in", "Я в деле", "— Want to join? — I'm in!"], ["Fair enough", "Справедливо / Логично", "Fair enough, you're right."], ["My bad", "Моя ошибка", "Oops, my bad."], ["Sounds good", "Звучит хорошо", "— Meet at 6? — Sounds good."], ["Hang on", "Подожди", "Hang on a second."], ["What's going on?", "Что происходит?", "Hey, what's going on?"], ["I'm on my way", "Я уже в пути", "I'm on my way, 10 minutes."], ["Keep in touch", "Оставаться на связи", "Let's keep in touch."], ["Give it a try", "Попробуй", "Why not give it a try?"], ["Take your time", "Не торопись", "Take your time, no rush."], ["Once in a blue moon", "Очень редко", "I eat fast food once in a blue moon."], ["The ball is in your court", "Теперь решение за тобой", "I made my offer. The ball is in your court."], ["Get out of hand", "Выйти из-под контроля", "The party got out of hand."], ["Kill two birds with one stone", "Убить двух зайцев", "I'll walk to work and exercise — two birds with one stone."], ["Let the cat out of the bag", "Проболтаться (о секрете)", "Who let the cat out of the bag?"], ["Spill the beans", "Выдать секрет", "Come on, spill the beans!"], ["Beat around the bush", "Ходить вокруг да около", "Stop beating around the bush."], ["Bite off more than you can chew", "Взяться за непосильное", "I bit off more than I can chew."], ["Cut corners", "Халтурить, экономить на качестве", "Don't cut corners on safety."], ["Get the hang of it", "Наловчиться", "You'll get the hang of it soon."], ["In the long run", "В долгосрочной перспективе", "It pays off in the long run."], ["Miss the boat", "Упустить шанс", "Buy now or you'll miss the boat."], ["On the fence", "Не определился", "I'm still on the fence about it."], ["Pull someone's leg", "Подшучивать над кем-то", "Relax, I'm pulling your leg."], ["Sleep on it", "Обдумать до утра", "Let me sleep on it."], ["Speak of the devil", "Лёгок на помине", "Speak of the devil, here he is!"], ["The last straw", "Последняя капля", "That was the last straw."], ["Time flies", "Время летит", "Time flies when you're having fun."], ["Up in the air", "Под вопросом", "Our plans are still up in the air."], ["When pigs fly", "Когда рак на горе свистнет", "He'll clean his room when pigs fly."], ["A blessing in disguise", "Нет худа без добра", "Losing that job was a blessing in disguise."], ["Hit the road", "Отправляться в путь", "It's late, let's hit the road."], ["Get cold feet", "Струсить в последний момент", "He got cold feet before the wedding."], ["Keep an eye on", "Присматривать за", "Keep an eye on my bag, please."]]}, {"id": "verbsb2", "ico": "🚀", "name": "Глаголы — B2", "lvl": "B2", "words": [["acknowledge", "признавать", "He acknowledged his mistake."], ["assume", "предполагать", "I assume you're tired."], ["claim", "утверждать", "He claims he's innocent."], ["convince", "убеждать", "She convinced me to stay."], ["deny", "отрицать", "He denied everything."], ["determine", "определять", "We need to determine the cause."], ["emphasize", "подчёркивать", "She emphasized the importance of sleep."], ["encourage", "поощрять / воодушевлять", "My parents encourage me."], ["ensure", "гарантировать / обеспечивать", "Ensure that the door is locked."], ["estimate", "оценивать (примерно)", "We estimate the cost at $500."], ["evaluate", "оценивать", "Evaluate the results."], ["hesitate", "колебаться", "Don't hesitate to call me."], ["identify", "определять / опознавать", "Identify the problem."], ["imply", "подразумевать", "What are you implying?"], ["insist", "настаивать", "He insisted on paying."], ["maintain", "поддерживать / сохранять", "Maintain a healthy weight."], ["overcome", "преодолевать", "Overcome your fears."], ["persuade", "уговаривать", "I persuaded him to come."], ["predict", "предсказывать", "Nobody can predict the future."], ["pursue", "преследовать / добиваться", "Pursue your dreams."], ["recognize", "узнавать / признавать", "I didn't recognize you."], ["reject", "отклонять", "They rejected my application."], ["rely on", "полагаться на", "You can rely on me."], ["resolve", "разрешать (проблему)", "We resolved the conflict."], ["struggle", "бороться / с трудом справляться", "I struggle with grammar."], ["tend to", "иметь склонность", "I tend to sleep late."], ["undertake", "браться за", "We undertook a big project."], ["withdraw", "снимать (деньги) / отзывать", "I withdrew some cash."], ["cope with", "справляться с", "How do you cope with stress?"], ["afford", "позволить себе (финансово)", "I can't afford a new car."]]}, {"id": "adjb2", "ico": "💎", "name": "Прилагательные — B2", "lvl": "B2", "words": [["accurate", "точный", "Accurate information."], ["adequate", "достаточный / адекватный", "Adequate sleep."], ["ambitious", "амбициозный", "An ambitious plan."], ["anxious", "тревожный", "I'm anxious about the results."], ["appropriate", "подходящий", "Appropriate clothes."], ["aware", "осведомлённый", "Are you aware of the risks?"], ["capable", "способный", "She is capable of anything."], ["considerable", "значительный", "A considerable amount."], ["consistent", "последовательный", "Be consistent."], ["crucial", "решающий", "A crucial moment."], ["efficient", "эффективный (о процессе)", "An efficient system."], ["essential", "необходимый", "Water is essential."], ["genuine", "подлинный / искренний", "A genuine smile."], ["inevitable", "неизбежный", "Change is inevitable."], ["reluctant", "неохотный", "He was reluctant to help."], ["relevant", "актуальный / относящийся к делу", "Relevant experience."], ["significant", "значительный", "A significant change."], ["sufficient", "достаточный", "Sufficient time."], ["temporary", "временный", "A temporary job."], ["permanent", "постоянный", "A permanent address."], ["thorough", "тщательный", "A thorough check."], ["tough", "жёсткий / трудный", "A tough decision."], ["vague", "расплывчатый", "A vague answer."], ["vivid", "яркий (живой)", "A vivid memory."], ["worth", "стоящий", "It's worth it."], ["eager", "жаждущий / нетерпеливый", "Eager to learn."]]}, {"id": "phrasal2", "ico": "🧩", "name": "Фразовые глаголы — B2", "lvl": "B2", "words": [["bring up", "поднимать (тему) / воспитывать", "Don't bring up that topic."], ["come up with", "придумать", "She came up with a great idea."], ["cut down on", "сократить", "Cut down on sugar."], ["deal with", "разбираться с", "I'll deal with it."], ["fall apart", "развалиться", "The plan fell apart."], ["get over", "оправиться от", "He got over the flu."], ["go through", "пройти через / просмотреть", "I went through a hard time."], ["keep up with", "поспевать за", "I can't keep up with you."], ["let down", "подвести", "Don't let me down."], ["look into", "изучить / расследовать", "We'll look into it."], ["look up to", "уважать / равняться на", "I look up to my father."], ["make out", "разобрать (понять)", "I can't make out his writing."], ["point out", "указывать", "She pointed out my mistake."], ["put up with", "терпеть", "I can't put up with this noise."], ["rule out", "исключить", "We can't rule it out."], ["stand out", "выделяться", "Her work stands out."], ["take over", "взять на себя / захватить", "Can you take over for me?"], ["turn down", "отклонить / убавить", "He turned down the offer."], ["work out", "получиться / тренироваться", "It all worked out."], ["wear out", "изнашиваться / утомлять", "My shoes wore out."], ["back up", "поддержать / сделать копию", "Back up your files."], ["call off", "отменить", "They called off the meeting."]]}, {"id": "collocations", "ico": "🤝", "name": "Устойчивые сочетания", "lvl": "B2", "words": [["make a decision", "принять решение", "I need to make a decision."], ["make a mistake", "совершить ошибку", "Everyone makes mistakes."], ["make progress", "делать успехи", "You're making progress!"], ["make money", "зарабатывать деньги", "He makes money online."], ["make an effort", "приложить усилие", "Make an effort."], ["do homework", "делать домашку", "Do your homework."], ["do business", "вести дела", "We do business with China."], ["do your best", "сделать всё возможное", "Just do your best."], ["take a break", "сделать перерыв", "Let's take a break."], ["take a risk", "рискнуть", "Sometimes you need to take a risk."], ["take part in", "участвовать в", "Take part in the competition."], ["take place", "происходить", "The event takes place in May."], ["pay attention", "обращать внимание", "Pay attention to details."], ["pay a visit", "навестить", "Pay a visit to your grandma."], ["have fun", "веселиться", "Have fun!"], ["have a look", "взглянуть", "Have a look at this."], ["keep a promise", "сдержать обещание", "Always keep your promises."], ["break a promise", "нарушить обещание", "Don't break your promise."], ["catch a cold", "простудиться", "I caught a cold."], ["save time", "экономить время", "This app saves time."], ["waste time", "тратить время зря", "Stop wasting time."], ["tell the truth", "говорить правду", "Tell me the truth."], ["tell a lie", "солгать", "Never tell a lie."], ["heavy rain", "сильный дождь", "Heavy rain is expected."], ["strong coffee", "крепкий кофе", "I need strong coffee."], ["fast food", "фастфуд", "Too much fast food."]]}, {"id": "wordsb2", "ico": "📰", "name": "Слова для новостей и споров", "lvl": "B2", "words": [["issue", "вопрос / проблема", "An important issue."], ["evidence", "доказательство", "There's no evidence."], ["research", "исследование", "Recent research shows..."], ["survey", "опрос", "According to the survey..."], ["average", "средний", "The average salary."], ["percentage", "процент", "A high percentage."], ["decrease", "снижение", "A decrease in prices."], ["rise", "рост / подниматься", "A sharp rise."], ["crisis", "кризис", "An economic crisis."], ["government", "правительство", "The government decided..."], ["law", "закон", "It's against the law."], ["rights", "права", "Human rights."], ["society", "общество", "Modern society."], ["environment", "окружающая среда", "Protect the environment."], ["pollution", "загрязнение", "Air pollution."], ["benefit", "польза / выгода", "The benefits of sport."], ["drawback", "недостаток", "The main drawback."], ["advantage", "преимущество", "A big advantage."], ["disadvantage", "недостаток", "Advantages and disadvantages."], ["impact", "влияние", "A huge impact."], ["approach", "подход", "A new approach."], ["trend", "тенденция", "A global trend."], ["on the other hand", "с другой стороны", "On the other hand, it's expensive."], ["in addition", "кроме того", "In addition, it's fast."], ["as a result", "в результате", "As a result, prices rose."], ["in my view", "по моему мнению", "In my view, it's wrong."]]}];
+
+const SENTENCES = [["I am a student", "Я студент"], ["She likes coffee", "Ей нравится кофе"], ["We live in Almaty", "Мы живём в Алматы"], ["Where is the station", "Где вокзал"], ["I don't understand you", "Я тебя не понимаю"], ["Can you help me", "Можешь мне помочь"], ["What time is it", "Который час"], ["I want to learn English", "Я хочу учить английский"], ["He is working now", "Он сейчас работает"], ["They went home yesterday", "Вчера они пошли домой"], ["My mother is a cook", "Моя мама — повар"], ["How much is this", "Сколько это стоит"], ["I will call you later", "Я позвоню тебе позже"], ["Do you speak English", "Ты говоришь по-английски"], ["I have never been to London", "Я никогда не был в Лондоне"], ["The weather is cold today", "Сегодня холодная погода"], ["I need a new phone", "Мне нужен новый телефон"], ["Please close the door", "Пожалуйста, закрой дверь"], ["We are going to the cinema", "Мы идём в кино"], ["She didn't come to work", "Она не пришла на работу"], ["I'm looking for a job", "Я ищу работу"], ["Where do you work", "Где ты работаешь"], ["It is very expensive", "Это очень дорого"], ["Could you speak more slowly please", "Не могли бы вы говорить помедленнее, пожалуйста"], ["I have been learning English for two months", "Я учу английский уже два месяца"], ["If I had more money I would travel", "Если бы у меня было больше денег, я бы путешествовал"], ["She has already finished her homework", "Она уже закончила домашнее задание"], ["What are you going to do this weekend", "Что ты собираешься делать на выходных"], ["I used to play football every day", "Раньше я играл в футбол каждый день"], ["The house was built in 1990", "Дом был построен в 1990 году"], ["He told me that he was tired", "Он сказал мне, что устал"], ["I'm not sure what to say", "Я не уверен, что сказать"], ["Have you ever eaten Kazakh food", "Ты когда-нибудь ел казахскую еду"], ["I would like to book a table for two", "Я хотел бы забронировать столик на двоих"], ["You should go to the doctor", "Тебе стоит сходить к врачу"], ["I can't afford a new car", "Я не могу позволить себе новую машину"], ["It depends on the weather", "Это зависит от погоды"], ["I'm interested in web design", "Мне интересен веб-дизайн"], ["She is better at math than me", "Она лучше меня в математике"], ["This is the best day of my life", "Это лучший день в моей жизни"], ["Don't forget to call your mom", "Не забудь позвонить маме"], ["I was watching TV when you called", "Я смотрел телевизор, когда ты позвонил"], ["We have to finish it by Friday", "Мы должны закончить это к пятнице"], ["How long have you lived here", "Как долго ты здесь живёшь"], ["I'm looking forward to seeing you", "Я с нетерпением жду встречи с тобой"], ["It takes an hour to get there", "Дорога туда занимает час"], ["Nobody knows where he is", "Никто не знает, где он"], ["Let me know if you need help", "Дай знать, если нужна помощь"], ["I'd rather stay at home tonight", "Я бы лучше остался дома сегодня вечером"], ["He asked me where I lived", "Он спросил меня, где я живу"], ["The more you practice the better you get", "Чем больше практикуешься, тем лучше получается"], ["I wish I could speak English fluently", "Жаль, что я не могу свободно говорить по-английски"], ["My phone was stolen last night", "Мой телефон украли прошлой ночью"], ["Unless you hurry you will miss the bus", "Если не поторопишься, опоздаешь на автобус"], ["I'm used to waking up early", "Я привык рано вставать"]];
+
+const GRAMMAR = [
+ {id:"tobe",name:"Глагол to be",lvl:"A1",
+  rule:`<p><b>to be</b> = «быть», «являться». В русском его часто пропускают, а в английском — нельзя.</p>
+  <div class="rule"><code>I am</code> · <code>you/we/they are</code> · <code>he/she/it is</code></div>
+  <p>I am tired. — Я устал.<br>She is a doctor. — Она врач.<br>Отрицание: <b>I am not</b>, <b>he isn't</b>, <b>they aren't</b>.<br>Вопрос: <b>Are you</b> ready?</p>`,
+  ex:[["I ___ happy.",["am","is","are"],0],["They ___ at home.",["is","am","are"],2],["My sister ___ a teacher.",["are","is","am"],1],["___ you busy?",["Is","Am","Are"],2],["It ___ cold today.",["are","is","am"],1],["We ___ not late.",["is","are","am"],1]]},
+ {id:"ps",name:"Present Simple",lvl:"A1",
+  rule:`<p>Привычки, факты, то, что происходит регулярно.</p>
+  <div class="rule"><code>I/you/we/they work</code> · <code>he/she/it works</code> (+s!)</div>
+  <p>Отрицание: <b>don't / doesn't</b> + глагол.<br>Вопрос: <b>Do / Does</b> ...?<br>Слова-подсказки: always, usually, every day, often, never.</p>`,
+  ex:[["She ___ in a bank.",["work","works","working"],1],["I ___ coffee every morning.",["drink","drinks","drinking"],0],["He ___ like fish.",["don't","doesn't","isn't"],1],["___ you speak English?",["Does","Are","Do"],2],["My dad ___ TV in the evening.",["watch","watches","watching"],1],["They ___ live here.",["doesn't","don't","aren't"],1]]},
+ {id:"pc",name:"Present Continuous",lvl:"A1",
+  rule:`<p>Действие происходит <b>прямо сейчас</b>.</p>
+  <div class="rule"><code>am / is / are + глагол-ing</code></div>
+  <p>I am reading now. — Я сейчас читаю.<br>She is cooking. — Она готовит.<br>Подсказки: now, right now, at the moment, Look!</p>`,
+  ex:[["Look! It ___ raining.",["is","are","does"],0],["I ___ watching a film now.",["is","am","are"],1],["They are ___ football.",["play","plays","playing"],2],["What ___ you doing?",["is","do","are"],2],["She ___ sleeping at the moment.",["is","are","am"],0]]},
+ {id:"past",name:"Past Simple",lvl:"A2",
+  rule:`<p>Закончилось в прошлом.</p>
+  <div class="rule">Правильные: <code>work → worked</code>. Неправильные учим: <code>go → went</code>, <code>see → saw</code>, <code>buy → bought</code>, <code>eat → ate</code>.</div>
+  <p>Отрицание и вопрос — через <b>did</b>, а глагол возвращается в начальную форму:<br>I <b>didn't go</b>. <b>Did</b> you <b>see</b> it?<br>Подсказки: yesterday, last week, ago, in 2020.</p>`,
+  ex:[["Yesterday I ___ to the park.",["go","went","goes"],1],["She ___ a new phone last week.",["buy","buyed","bought"],2],["We ___ watch TV yesterday.",["didn't","don't","weren't"],0],["Did you ___ my message?",["saw","see","seen"],1],["They ___ in London in 2020.",["was","were","are"],1],["I ___ pizza for dinner.",["ate","eat","eaten"],0]]},
+ {id:"fut",name:"Будущее: will / going to",lvl:"A2",
+  rule:`<p><b>will</b> — решение в момент речи, обещание, прогноз.<br><b>going to</b> — уже есть план.</p>
+  <div class="rule"><code>I will help you.</code> · <code>I am going to study tomorrow.</code></div>
+  <p>Отрицание: <b>won't</b> = will not.</p>`,
+  ex:[["The phone is ringing. I ___ answer it.",["will","am going to","going"],0],["We bought tickets. We ___ fly to Turkey.",["will","are going to","go"],1],["I promise I ___ tell anyone.",["won't","don't","am not"],0],["Look at the clouds! It ___ rain.",["is going to","will be","goes to"],0],["___ you help me tomorrow?",["Are","Do","Will"],2]]},
+ {id:"art",name:"Артикли a / an / the",lvl:"A1",
+  rule:`<p><b>a / an</b> — «один какой-то», впервые упоминаем. <b>an</b> — перед гласным звуком: an apple, an hour.<br><b>the</b> — конкретный, уже известный предмет.</p>
+  <div class="rule"><code>I have a cat. The cat is black.</code></div>`,
+  ex:[["I want ___ apple.",["a","an","the"],1],["She is ___ teacher.",["an","the","a"],2],["Close ___ door, please.",["a","the","an"],1],["He waited for ___ hour.",["a","an","the"],1],["___ sun is hot today.",["A","An","The"],2]]},
+ {id:"modal",name:"can / must / should",lvl:"A2",
+  rule:`<p><b>can</b> — могу, умею. <b>must</b> — должен (строго). <b>should</b> — следует, совет.</p>
+  <div class="rule">После них глагол <b>без to</b> и без -s: <code>She can swim.</code></div>`,
+  ex:[["I ___ swim very well.",["can","must","should"],0],["You ___ stop at a red light.",["can","must","should"],1],["You look tired. You ___ rest.",["should","can","must"],0],["She can ___ English.",["speaks","to speak","speak"],2],["___ you help me?",["Must","Can","Should"],1]]},
+ {id:"pp",name:"Present Perfect",lvl:"B1",
+  rule:`<p>Опыт в жизни или результат, важный сейчас. Время не указано.</p>
+  <div class="rule"><code>have / has + 3-я форма</code>: I have seen, she has done</div>
+  <p>Подсказки: ever, never, already, yet, just.<br>Have you ever been to Paris? — Ты когда-нибудь был в Париже?</p>`,
+  ex:[["I have ___ this film.",["see","saw","seen"],2],["She ___ finished her work.",["have","has","is"],1],["Have you ___ been to Japan?",["ever","yet","never"],0],["We haven't eaten ___.",["already","yet","ever"],1],["He has just ___ home.",["come","came","comes"],0]]},
+ {id:"comp",name:"Сравнения: -er / more / the most",lvl:"A2",
+  rule:`<p>Короткие прилагательные: <b>+er / the +est</b>. Длинные: <b>more / the most</b>.</p>
+  <div class="rule"><code>big → bigger → the biggest</code><br><code>beautiful → more beautiful → the most beautiful</code></div>
+  <p>Исключения: <b>good → better → the best</b>, <b>bad → worse → the worst</b>, <b>far → further</b>.<br>Сравниваем через <b>than</b>: She is taller than me.</p>`,
+  ex:[["My brother is ___ than me.",["tall","taller","tallest"],1],["This is the ___ film I've ever seen.",["worse","bad","worst"],2],["English is ___ than Chinese.",["easyer","more easy","easier"],2],["She is the ___ person in our family.",["most beautiful","more beautiful","beautifulest"],0],["Today is ___ than yesterday.",["gooder","better","more good"],1],["Moscow is ___ from here than Astana.",["farer","further","most far"],1]]},
+ {id:"usedto",name:"used to / be used to",lvl:"B1",
+  rule:`<p><b>used to + глагол</b> — раньше было, теперь нет.<br><b>be used to + -ing</b> — привык к чему-то.</p>
+  <div class="rule"><code>I used to smoke.</code> — Раньше я курил.<br><code>I'm used to working late.</code> — Я привык работать допоздна.</div>
+  <p>Отрицание: <b>didn't use to</b>.</p>`,
+  ex:[["I ___ live in Shymkent, but now I live in Almaty.",["use to","used to","am used to"],1],["She is used to ___ early.",["get up","getting up","got up"],1],["We didn't ___ have a car.",["used to","use to","using to"],1],["I'm not used to ___ spicy food.",["eat","eating","ate"],1],["He ___ play football when he was a kid.",["is used to","used to","uses to"],1],["You'll soon get used to ___ here.",["live","living","lived"],1]]},
+ {id:"cond",name:"Условные предложения (if)",lvl:"B1",
+  rule:`<p><b>1-й тип</b> — реальное будущее: <code>If it rains, I will stay home.</code></p>
+  <p><b>2-й тип</b> — нереальное сейчас: <code>If I had money, I would buy a car.</code><br>С <b>I/he/she</b> часто <b>were</b>: If I were you...</p>
+  <p><b>3-й тип</b> — нереальное прошлое: <code>If I had studied, I would have passed.</code></p>
+  <div class="rule">После <b>if</b> никогда не ставим <b>will</b>!</div>`,
+  ex:[["If it ___ tomorrow, we will stay home.",["will rain","rains","rained"],1],["If I ___ rich, I would travel the world.",["am","were","will be"],1],["If you heat ice, it ___.",["melts","melted","would melt"],0],["I would help you if I ___ time.",["have","had","will have"],1],["If I ___ harder, I would have passed the exam.",["studied","had studied","would study"],1],["If I were you, I ___ that job.",["will take","would take","take"],1]]},
+ {id:"passive",name:"Пассивный залог",lvl:"B1",
+  rule:`<p>Важно действие, а не кто его сделал.</p>
+  <div class="rule"><code>be + 3-я форма глагола</code></div>
+  <p>Present: The room <b>is cleaned</b> every day.<br>Past: The house <b>was built</b> in 1990.<br>Future: It <b>will be done</b> tomorrow.<br>Кем сделано — <b>by</b>: written by Abai.</p>`,
+  ex:[["English ___ all over the world.",["speaks","is spoken","is speaking"],1],["The car ___ last year.",["was made","is made","made"],0],["This book was written ___ a famous author.",["from","with","by"],2],["The letters ___ tomorrow.",["will send","will be sent","are sending"],1],["My phone ___ yesterday!",["stole","was stolen","is stolen"],1],["These cars ___ in Japan.",["are made","make","is made"],0]]},
+ {id:"reported",name:"Косвенная речь",lvl:"B2",
+  rule:`<p>Передаём чужие слова — время «сдвигается назад».</p>
+  <div class="rule"><code>"I am tired" → He said (that) he was tired.</code><br><code>"I will come" → She said she would come.</code><br><code>"I saw it" → He said he had seen it.</code></div>
+  <p>Вопросы: <b>He asked where I lived</b> (прямой порядок слов, без do).<br><b>say</b> — без кого, <b>tell</b> + кому: He told <b>me</b>...</p>`,
+  ex:[["She said she ___ hungry.",["is","was","be"],1],["He ___ me that he was busy.",["said","told","asked"],1],["They said they ___ come later.",["will","would","are"],1],["She asked me where I ___.",["live","lived","do live"],1],["He said he ___ the film before.",["has seen","had seen","saw"],1],["She ___ that she was ready.",["told","said","asked"],1]]},
+ {id:"gerinf",name:"-ing или to + глагол",lvl:"B2",
+  rule:`<p>После одних глаголов идёт <b>-ing</b>, после других — <b>to</b>.</p>
+  <div class="rule"><b>-ing</b>: enjoy, avoid, finish, mind, keep, suggest, can't stand<br><b>to</b>: want, decide, hope, plan, agree, refuse, promise, afford</div>
+  <p>После предлогов — всегда -ing: interested <b>in learning</b>, good <b>at cooking</b>.</p>`,
+  ex:[["I enjoy ___ books.",["to read","reading","read"],1],["She decided ___ abroad.",["studying","to study","study"],1],["Avoid ___ too much sugar.",["eating","to eat","eat"],0],["I can't afford ___ a new phone.",["buying","to buy","buy"],1],["He is good at ___.",["to cook","cook","cooking"],2],["Would you mind ___ the window?",["opening","to open","open"],0]]},
+ {id:"wish",name:"I wish / If only",lvl:"B2",
+  rule:`<p>Сожаление о настоящем: <code>I wish + Past Simple</code><br>I wish I <b>had</b> more time. — Жаль, что у меня мало времени.</p>
+  <p>Сожаление о прошлом: <code>I wish + had + 3-я форма</code><br>I wish I <b>had studied</b> harder.</p>
+  <div class="rule">Раздражение: <code>I wish you would stop...</code></div>`,
+  ex:[["I wish I ___ speak English fluently.",["can","could","will"],1],["I wish I ___ more money.",["have","had","will have"],1],["I wish I ___ to the party yesterday.",["went","had gone","go"],1],["I wish you ___ stop talking!",["would","will","are"],0],["She wishes she ___ taller.",["is","were","be"],1]]}
+];
+
+{const o={A1:0,A2:1,B1:2,B2:3};GRAMMAR.sort((a,b)=>o[a.lvl]-o[b.lvl]);}
+
+/* ===================== STATE ===================== */
+const KEY="eng_app_v1";
+let S={xp:0,known:{},grammar:{},days:[],quizBest:0,miss:{},hard:{},ver:2};
+try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(!o.ver){o.known={};o.ver=2;}S=Object.assign(S,o);}}catch(e){}
+S.miss=S.miss||{};S.hard=S.hard||{};
+/* ошибка в слове: после 2 ошибок слово уходит в «Невыученные» */
+function miss(en){S.miss[en]=(S.miss[en]||0)+1;if(en in S.hard)S.hard[en]=0;else if(S.miss[en]>=2){S.hard[en]=0;delete S.known[en];}save();}
+const hardCount=()=>Object.keys(S.hard).length;
+save();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function today(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function markDay(){const t=today();if(!S.days.includes(t)){S.days.push(t);if(S.days.length>400)S.days.shift();}save();}
+function addXP(n){S.xp+=n;markDay();save();}
+function streak(){let n=0;const d=new Date();for(;;){const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();if(S.days.includes(k)){n++;d.setDate(d.getDate()-1);}else break;}return n;}
+function level(){return Math.floor(S.xp/100)+1;}
+const allWords=()=>{const m=new Map();TOPICS.forEach(t=>t.words.forEach(w=>{if(!m.has(w[0]))m.set(w[0],{en:w[0],ru:w[1],ex:w[2],topic:t.id});}));return [...m.values()];};
+const knownCount=()=>allWords().filter(w=>S.known[w.en]).length;
+
+/* ===================== HELPERS ===================== */
+const app=document.getElementById("app");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function speak(text){
+  try{
+    if(!("speechSynthesis" in window))return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.9;
+    const v=speechSynthesis.getVoices().find(v=>/en(-|_)(US|GB)/i.test(v.lang));if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function render(html){app.innerHTML='<div class="fade">'+html+'</div>';window.scrollTo(0,0);}
+function setTab(t){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function go(tab){setTab(tab);({home,words,quiz:quizStart,build:buildStart,grammar}[tab]||home)();}
+
+/* ===================== HOME ===================== */
+function home(){
+  const lv=level(),pct=S.xp%100,total=allWords().length,gDone=Object.keys(S.grammar).length;
+  render(`
+  <h1>Привет! 👋</h1>
+  <p class="muted" style="margin:0">Немного английского каждый день — и результат придёт.</p>
+  <div class="stats">
+    <div class="stat"><b>🔥 ${streak()}</b><small>дней подряд</small></div>
+    <div class="stat"><b>⭐ ${S.xp}</b><small>очков</small></div>
+    <div class="stat"><b>${lv}</b><small>уровень</small></div>
+  </div>
+  <div class="card">
+    <b>До уровня ${lv+1}</b> <span class="muted">· ${pct}/100</span>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+  </div>
+  <button class="tile" style="width:100%;margin-top:4px;display:flex;align-items:center;gap:12px;${hardCount()?"border-color:var(--bad)":""}" onclick="${hardCount()?"cards('__hard')":"go('words')"}">
+    <div class="ico">🧠</div><div style="flex:1"><b style="margin:0">Невыученные слова</b><small>${hardCount()?hardCount()+" слов — потренируй их":"пока пусто — сюда попадают слова, где ты ошибся 2 раза"}</small></div><span class="muted">›</span></button>
+  <h2>Что делаем?</h2>
+  <div class="grid">
+    <button class="tile" onclick="go('words')"><div class="ico">📚</div><b>Слова</b><small>${knownCount()} из ${total} выучено</small></button>
+    <button class="tile" onclick="go('quiz')"><div class="ico">✅</div><b>Тест</b><small>10 вопросов</small></button>
+    <button class="tile" onclick="go('build')"><div class="ico">🧩</div><b>Собери фразу</b><small>из слов</small></button>
+    <button class="tile" onclick="go('grammar')"><div class="ico">📖</div><b>Грамматика</b><small>${gDone} из ${GRAMMAR.length} тем</small></button>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <b>💡 Совет</b><p class="muted" style="margin:6px 0 0">Нажимай 🔊 и повторяй слова вслух. Так быстрее запоминается произношение.</p>
+  </div>
+  <button class="btn sec" onclick="resetAll()">Сбросить прогресс</button>
+  <div id="confirm"></div>`);
+}
+function resetAll(){
+  document.getElementById("confirm").innerHTML=`<div class="card" style="margin-top:10px"><b>Точно сбросить весь прогресс?</b>
+  <div class="row"><button class="btn" style="background:var(--bad)" onclick="S={xp:0,known:{},grammar:{},days:[],quizBest:0,miss:{},hard:{},ver:2};save();home()">Да, сбросить</button>
+  <button class="btn sec" onclick="document.getElementById('confirm').innerHTML=''">Отмена</button></div></div>`;
+}
+
+/* ===================== WORDS ===================== */
+function words(){
+  render(`<h1>Слова</h1><p class="muted" style="margin:0">Выбери тему. Урок — 8 слов: карточка, выбор перевода и написание. Слово считается выученным, только если всё сделано без ошибок.</p>
+  ${hardCount()?`<button class="tile" style="width:100%;margin-top:14px;display:flex;align-items:center;gap:12px;border-color:var(--bad)" onclick="cards('__hard')"><div class="ico">🧠</div><div style="flex:1"><b style="margin:0">Невыученные слова</b><small>${hardCount()} слов · ошибся 2+ раза</small></div><span class="muted">›</span></button>`:""}
+  <div style="margin-top:6px">${TOPICS.map((t,i)=>{
+    const k=t.words.filter(w=>S.known[w[0]]).length,p=Math.round(k/t.words.length*100);
+    const head=(i===0||TOPICS[i-1].lvl!==t.lvl)?`<h2>${t.lvl} · ${LVL_NAMES[t.lvl]}</h2>`:"";
+    return head+`<button class="tile" style="width:100%;margin-bottom:10px;display:flex;align-items:center;gap:12px" onclick="cards('${t.id}')">
+      <div class="ico">${t.ico}</div><div style="flex:1"><b style="margin:0">${t.name}</b><small>${k}/${t.words.length} выучено</small><div class="bar"><i style="width:${p}%"></i></div></div></button>`;
+  }).join("")}</div>`);
+}
+/* ===== Изучение слов: карточка → выбор перевода → написание ===== */
+let C={};
+const BATCH=8;
+const wObj=en=>allWords().find(x=>x.en===en);
+function cards(id){
+  if(id==="__hard"){
+    const list=Object.keys(S.hard).map(wObj).filter(Boolean);
+    if(!list.length){words();return;}
+    const pick=shuffle(list).slice(0,BATCH);
+    C={topic:{id:"__hard",ico:"🧠",name:"Невыученные слова",words:[]},hard:true,queue:pick.map(w=>({w,fails:0})),total:pick.length,learned:0,review:false,step:"card",ok:true};
+    showCard();return;
+  }
+  const t=topicOf(id);
+  const unknown=shuffle(t.words.filter(w=>!S.known[w[0]]));
+  const review=!unknown.length;
+  const pick=(review?shuffle(t.words):unknown).slice(0,BATCH).map(w=>wObj(w[0])).filter(Boolean);
+  C={topic:t,queue:pick.map(w=>({w,fails:0})),total:pick.length,learned:0,review,step:"card",ok:true};
+  showCard();
+}
+function cardHead(){
+  const t=C.topic,done=C.total-C.queue.length;
+  return `<button class="back" onclick="words()">‹ Темы</button>
+  <div style="display:flex;justify-content:space-between;align-items:center"><span class="pill">${t.ico} ${t.name}${C.review?" · повторение":""}</span><span class="muted">${done} / ${C.total}</span></div>
+  <div class="bar"><i style="width:${done/C.total*100}%"></i></div>`;
+}
+function showCard(){
+  const t=C.topic;
+  if(!C.queue.length&&C.hard){
+    const n=hardCount();
+    render(`<div class="card" style="text-align:center;margin-top:20px"><div style="font-size:48px">🧠</div><h2>Тренировка окончена</h2>
+      <p class="muted">Без ошибок: ${C.learned} из ${C.total}<br>${n?"В списке невыученных: "+n+" слов":"Все трудные слова выучены! 🎉"}</p>
+      <p class="muted" style="font-size:14px">Слово уходит из списка после 2 правильных ответов без ошибок подряд.</p>
+      ${n?`<button class="btn" onclick="cards('__hard')">Ещё тренировка</button>`:""}<button class="btn sec" onclick="go('words')">К словам</button></div>`);
+    return;
+  }
+  if(!C.queue.length){
+    const left=t.words.filter(w=>!S.known[w[0]]).length;
+    render(`<button class="back" onclick="words()">‹ Темы</button><div class="card" style="text-align:center;margin-top:20px">
+      <div style="font-size:48px">🎉</div><h2>Урок пройден!</h2>
+      <p class="muted">С первой попытки: ${C.learned} из ${C.total}<br>В теме осталось выучить: ${left} из ${t.words.length}</p>
+      <button class="btn" onclick="cards('${t.id}')">${left?"Следующие слова":"Повторить тему"}</button>
+      <button class="btn sec" onclick="quizStart('${t.id}')">Тест по теме</button></div>`);
+    return;
+  }
+  const item=C.queue[0],w=item.w,q=s=>esc(s).replace(/'/g,"\\'");
+  if(C.step==="card"){
+    C.ok=item.fails===0;
+    render(cardHead()+`
+    <div class="flash" onclick="this.classList.toggle('flip')">
+      <div class="flash-in">
+        <div class="side"><div class="w">${esc(w.en)}</div>${item.fails?'<div class="muted" style="margin-top:6px">повторяем ещё раз</div>':(w.en in S.hard)?`<div class="muted" style="margin-top:6px">🧠 трудное слово · ${S.hard[w.en]}/2</div>`:""}
+          <button class="speak" onclick="event.stopPropagation();speak('${q(w.en)}')">🔊</button><div class="hint">нажми, чтобы перевернуть</div></div>
+        <div class="side b"><div class="w" style="font-size:28px">${esc(w.ru)}</div><div class="ex">${esc(w.ex)}</div>
+          <button class="speak" onclick="event.stopPropagation();speak('${q(w.ex)}')">🔊</button></div>
+      </div>
+    </div>
+    <p class="muted" style="text-align:center;margin:0">Запомни, как слово пишется и что значит</p>
+    <button class="btn" onclick="C.step='choice';showCard()">Проверить себя →</button>`);
+    setTimeout(()=>speak(w.en),200);
+  }
+  else if(C.step==="choice"){
+    const opts=shuffle([w,...similar(w,3)]);C.correct=opts.indexOf(w);
+    render(cardHead()+`<p class="muted" style="text-align:center;margin:16px 0 0">Шаг 1 из 2 · выбери перевод</p>
+    <div class="q">${esc(w.en)}</div>
+    <div style="margin-top:14px">${opts.map((o,i)=>`<button class="opt" onclick="cardChoice(${i},this)">${esc(o.ru)}</button>`).join("")}</div><div id="fb"></div>`);
+  }
+  else if(C.step==="write"||C.step==="retype"){
+    const re=C.step==="retype";
+    const hint=w.en.split(" ").map(p=>p[0]+"·".repeat(Math.max(p.length-1,0))).join("  ");
+    render(cardHead()+`<p class="muted" style="text-align:center;margin:16px 0 0">Шаг 2 из 2 · ${re?"перепиши правильно":"напиши по-английски"}</p>
+    <div class="q">${esc(w.ru)} ${sayBtn(w.en)}</div>
+    ${re?`<div class="feedback bad" style="text-align:center;font-size:22px;letter-spacing:1px">${esc(w.en)}</div>`:`<div class="muted" style="text-align:center;letter-spacing:2px;margin-bottom:10px">${esc(hint)}</div>`}
+    <form onsubmit="event.preventDefault();cardWrite()"><input id="ti" class="inp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${re?"Набери слово ещё раз":"Введи слово"}">
+    <button class="btn">Проверить</button></form><div id="fb"></div>`);
+    setTimeout(()=>{const i=document.getElementById("ti");if(i)i.focus();},50);
+  }
+}
+function cardChoice(i,el){
+  const btns=document.querySelectorAll(".opt");if(btns[0].disabled)return;btns.forEach(b=>b.disabled=true);
+  btns[C.correct].classList.add("ok");const ok=i===C.correct;
+  if(!ok){el.classList.add("bad");C.ok=false;miss(C.queue[0].w.en);}
+  document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"bad"}">${ok?"Верно!":"Не совсем. Запомни: "+esc(C.queue[0].w.ru)}</div><button class="btn" onclick="C.step='write';showCard()">Дальше</button>`;
+}
+function cardWrite(){
+  const inp=document.getElementById("ti");const item=C.queue[0],w=item.w;
+  const got=norm(inp.value);if(!got)return;
+  if(got===norm(w.en)){
+    speak(w.en);
+    if(C.step==="write"&&C.ok){
+      if(w.en in S.hard){S.hard[w.en]++;if(S.hard[w.en]>=2){delete S.hard[w.en];delete S.miss[w.en];S.known[w.en]=1;}}
+      else S.known[w.en]=1;
+      C.learned++;addXP(3);C.queue.shift();}
+    else{item.fails++;markDay();const it=C.queue.shift();if(item.fails<=2)C.queue.push(it);else delete S.known[w.en];}
+    save();
+    const wasOk=C.step==="write"&&C.ok;
+    document.getElementById("fb").innerHTML=`<div class="feedback ok">${wasOk?"Отлично! Слово выучено ✓":"Правильно! Это слово ещё повторим."}</div><button class="btn" id="nx">Дальше</button>`;
+    inp.disabled=true;document.querySelector("form .btn").style.display="none";
+    document.getElementById("nx").onclick=()=>{C.step="card";showCard();};
+    if(wasOk&&C.queue.length===0){}
+  }else{
+    if(C.step==="write")miss(w.en);
+    C.ok=false;delete S.known[w.en];save();
+    if(C.step==="write"){C.step="retype";showCard();
+      document.getElementById("fb").innerHTML=`<div class="muted" style="text-align:center;margin-top:8px">Ты написал: <s>${esc(inp.value)}</s></div>`;}
+    else{inp.value="";inp.style.borderColor="var(--bad)";inp.placeholder="Посмотри внимательно и набери ещё раз";}
+  }
+}
+
+/* ===================== QUIZ ===================== */
+const LVL_NAMES={A1:"Начальный",A2:"Элементарный",B1:"Средний",B2:"Выше среднего"};
+const topicOf=id=>TOPICS.find(t=>t.id===id);
+function lev(a,b){a=a.toLowerCase();b=b.toLowerCase();const m=a.length,n=b.length;if(!m)return n;if(!n)return m;
+  let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+const sim=(a,b)=>1-lev(a,b)/Math.max(a.length,b.length);
+const ruTokens=r=>r.toLowerCase().split(/[\/,;()?!.]/).map(s=>s.trim()).filter(Boolean);
+const norm=s=>s.toLowerCase().replace(/[.,!?'’"«»—-]/g,"").replace(/\s+/g," ").trim();
+const canSpeak=()=>{try{return "speechSynthesis" in window}catch(e){return false}};
+
+/* похожие варианты: та же тема, похожее написание, похожая длина */
+function similar(w,n){
+  const all=allWords(),wt=topicOf(w.topic),wTok=new Set(ruTokens(w.ru));
+  const multi=w.en.includes(" ");
+  const scored=all.filter(x=>x.en!==w.en).map(x=>{
+    const xt=topicOf(x.topic);
+    let s=(x.topic===w.topic?4:0)+(xt.lvl===wt.lvl?1:0)+sim(x.en,w.en)*3+sim(x.ru,w.ru)*1.5;
+    s+=(x.en.includes(" ")===multi?1.5:-2);
+    s-=Math.abs(x.en.length-w.en.length)/6;
+    if(x.en[0].toLowerCase()===w.en[0].toLowerCase())s+=.7;
+    return {x,s:s+Math.random()*1.6};
+  }).sort((a,b)=>b.s-a.s);
+  const out=[],usedTok=new Set(wTok),usedEn=new Set([w.en.toLowerCase()]);
+  for(const {x} of scored){
+    if(out.length>=n)break;
+    const t=ruTokens(x.ru);
+    if(t.some(k=>usedTok.has(k))||usedEn.has(x.en.toLowerCase()))continue;
+    t.forEach(k=>usedTok.add(k));usedEn.add(x.en.toLowerCase());out.push(x);
+  }
+  return out;
+}
+function gapOf(w){
+  if(!w.ex)return null;
+  const re=new RegExp("\\b"+w.en.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\b","i");
+  return re.test(w.ex)?w.ex.replace(re,"_____"):null;
+}
+
+function quizStart(topicId){
+  setTab("quiz");
+  if(topicId){runQuiz(topicOf(topicId).words.map(w=>allWords().find(x=>x.en===w[0])).filter(Boolean),topicId);return;}
+  const kn=allWords().filter(w=>S.known[w.en]).length;
+  const btn=(spec,ico,title,sub)=>`<button class="tile" style="width:100%;margin-bottom:10px;display:flex;align-items:center;gap:12px" onclick="quizPick('${spec}')"><div class="ico">${ico}</div><div style="flex:1"><b style="margin:0">${title}</b><small>${sub}</small></div><span class="muted">›</span></button>`;
+  render(`<h1>Тест</h1><p class="muted" style="margin:0">12 вопросов разных типов: выбор, ввод с клавиатуры, на слух и пропуск в предложении. Варианты похожи друг на друга — придётся думать.</p>
+  <h2>Что проверяем?</h2>
+  ${btn("known","⭐","Мои выученные слова",kn>=8?kn+" слов":"нужно отметить хотя бы 8 слов")}
+  ${["A1","A2","B1","B2"].map(l=>btn(l,{A1:"🌱",A2:"🌿",B1:"🌳",B2:"🏔️"}[l],l+" · "+LVL_NAMES[l],allWords().filter(w=>topicOf(w.topic).lvl===l).length+" слов")).join("")}
+  ${btn("all","🔥","Всё подряд","максимальная сложность")}`);
+}
+function quizPick(spec){
+  const all=allWords();let pool;
+  if(spec==="known"){pool=all.filter(w=>S.known[w.en]);if(pool.length<8){render(`<div class="card" style="margin-top:20px"><b>Пока мало выученных слов</b><p class="muted">Отметь в разделе «Слова» хотя бы 8 слов кнопкой «Знаю ✓».</p><button class="btn" onclick="go('words')">К словам</button><button class="btn sec" onclick="quizStart()">Назад</button></div>`);return;}}
+  else if(spec==="all")pool=all;
+  else pool=all.filter(w=>topicOf(w.topic).lvl===spec);
+  runQuiz(pool,null,spec);
+}
+function runQuiz(pool,topicId,spec){
+  const types=["en2ru","ru2en","type","gap","ru2en","type"];if(canSpeak())types.push("listen");
+  const qs=shuffle(pool).slice(0,12).map(w=>{
+    let t=types[Math.floor(Math.random()*types.length)];
+    const gap=gapOf(w);if(t==="gap"&&!gap)t="type";
+    if(t==="type"&&w.en.length>22)t="ru2en";
+    const d=similar(w,3);
+    if(t==="type")return {t,w};
+    const opts=shuffle([w,...d]);
+    const show=(t==="en2ru"||t==="listen")?"ru":"en";
+    return {t,w,gap,opts:opts.map(o=>o[show]),correct:opts.indexOf(w)};
+  });
+  Q={qs,i:0,score:0,topicId,spec};showQ();
+}
+const QLABEL={en2ru:"Переведи на русский",ru2en:"Переведи на английский",type:"Напиши по-английски",listen:"Послушай и выбери перевод",gap:"Вставь пропущенное слово"};
+function sayBtn(t,big){return `<button class="speak" style="${big?"width:64px;height:64px;font-size:28px":"width:38px;height:38px;font-size:16px;margin:0;vertical-align:middle"}" onclick="speak('${esc(t).replace(/'/g,"\\'")}')">🔊</button>`;}
+function showQ(){
+  if(Q.i>=Q.qs.length){
+    const s=Q.score,n=Q.qs.length;if(s>S.quizBest)S.quizBest=s;addXP(s*4);
+    const again=Q.topicId?`quizStart('${Q.topicId}')`:`quizPick('${Q.spec}')`;
+    render(`<div class="card" style="text-align:center;margin-top:20px"><div style="font-size:52px">${s>=10?"🏆":s>=7?"👍":"💪"}</div>
+    <h2>${s} из ${n}</h2><p class="muted">${s>=10?"Отлично!":s>=7?"Хорошо, продолжай!":"Повтори слова и попробуй ещё."} +${s*4} очков</p>
+    <button class="btn" onclick="${again}">Ещё раз</button><button class="btn sec" onclick="quizStart()">Другой тест</button></div>`);
+    return;
+  }
+  const q=Q.qs[Q.i],w=q.w;
+  let body="";
+  if(q.t==="en2ru")body=`<div class="q">${esc(w.en)} ${sayBtn(w.en)}</div>`;
+  else if(q.t==="ru2en"||q.t==="type")body=`<div class="q">${esc(w.ru)}</div>`;
+  else if(q.t==="listen")body=`<div style="text-align:center;margin:18px 0">${sayBtn(w.en,true)}<div class="muted" style="margin-top:6px">нажми, чтобы прослушать ещё раз</div></div>`;
+  else if(q.t==="gap")body=`<div class="q" style="font-size:20px">${esc(q.gap)}</div><div class="muted" style="text-align:center">(${esc(w.ru)})</div>`;
+  let answer;
+  if(q.t==="type"){
+    const hint=w.en.split(" ").map(p=>p[0]+"·".repeat(Math.max(p.length-1,0))).join("  ");
+    answer=`<div class="muted" style="text-align:center;letter-spacing:2px;margin-bottom:10px">${esc(hint)}</div>
+    <form onsubmit="event.preventDefault();ansType()"><input id="ti" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Введи ответ" style="width:100%;padding:15px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:18px">
+    <button class="btn" id="tb">Проверить</button></form>`;
+  }else answer=q.opts.map((o,i)=>`<button class="opt" onclick="ansQ(${i},this)">${esc(o)}</button>`).join("");
+  render(`<div style="display:flex;justify-content:space-between;gap:8px"><span class="pill">${QLABEL[q.t]}</span><span class="muted">${Q.i+1}/${Q.qs.length} · ✓ ${Q.score}</span></div>
+  <div class="bar"><i style="width:${Q.i/Q.qs.length*100}%"></i></div>${body}
+  <div style="margin-top:14px">${answer}</div><div id="fb"></div>`);
+  if(q.t==="listen")setTimeout(()=>speak(w.en),250);
+  if(q.t==="type")setTimeout(()=>{const i=document.getElementById("ti");if(i)i.focus();},50);
+}
+function nextBtn(){return `<button class="btn" onclick="Q.i++;showQ()">Дальше</button>`;}
+function ansQ(i,el){
+  const q=Q.qs[Q.i],w=q.w;const btns=document.querySelectorAll(".opt");
+  if(btns[0].disabled)return;btns.forEach(b=>b.disabled=true);
+  btns[q.correct].classList.add("ok");
+  const ok=i===q.correct;if(ok)Q.score++;else{el.classList.add("bad");miss(w.en);}
+  speak(q.t==="gap"?w.ex:w.en);
+  document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"bad"}">${ok?"Верно! 🎉":"Правильно: "+esc(q.opts[q.correct])}<div style="font-weight:500;margin-top:4px">${esc(w.en)} — ${esc(w.ru)}</div></div>${nextBtn()}`;
+}
+function ansType(){
+  const q=Q.qs[Q.i],w=q.w,inp=document.getElementById("ti");if(!inp||inp.disabled)return;
+  const got=norm(inp.value),want=norm(w.en);if(!got)return;
+  inp.disabled=true;document.getElementById("tb").style.display="none";
+  const d=lev(got,want),exact=d===0,close=!exact&&want.length>=5&&d===1;
+  if(exact||close)Q.score++;else miss(w.en);
+  inp.style.borderColor=exact||close?"var(--ok)":"var(--bad)";
+  speak(w.en);
+  document.getElementById("fb").innerHTML=`<div class="feedback ${exact||close?"ok":"bad"}">${exact?"Верно! 🎉":close?"Почти! Одна опечатка, засчитано.":"Неверно."}<div style="font-weight:500;margin-top:4px">Правильно: <b>${esc(w.en)}</b></div></div>${nextBtn()}`;
+}
+
+/* ===================== SENTENCE BUILDER ===================== */
+let B={};
+const EXTRA_WORDS=["is","are","am","do","does","did","the","a","an","to","in","on","at","for","was","were","have","has","will","not","my","your","his","her","it","they","we","you"];
+function buildStart(){B={list:shuffle(SENTENCES).slice(0,8),i:0,score:0};showB();}
+function showB(){
+  if(B.i>=B.list.length){addXP(B.score*5);
+    render(`<div class="card" style="text-align:center;margin-top:20px"><div style="font-size:52px">🧩</div><h2>${B.score} из ${B.list.length}</h2><p class="muted">+${B.score*5} очков</p>
+    <button class="btn" onclick="buildStart()">Ещё фразы</button></div>`);return;}
+  const [en,ru]=B.list[B.i];
+  B.words=en.split(" ");
+  const lower=new Set(B.words.map(x=>x.toLowerCase()));
+  const extra=shuffle(EXTRA_WORDS.filter(x=>!lower.has(x))).slice(0,B.words.length>6?3:2);
+  B.mix=shuffle(B.words.concat(extra).map(w=>({w})));B.picked=[];
+  render(`<div style="display:flex;justify-content:space-between"><span class="pill">Собери фразу</span><span class="muted">${B.i+1}/${B.list.length}</span></div>
+  <div class="bar"><i style="width:${B.i/B.list.length*100}%"></i></div>
+  <div class="q" style="font-size:21px">«${esc(ru)}»</div>
+  <div class="muted" style="text-align:center;font-size:14px">Осторожно: среди слов есть лишние</div>
+  <div class="chips" id="ans"></div>
+  <div class="chips" style="border:0;padding:0" id="pool"></div>
+  <div class="row"><button class="btn sec" onclick="B.picked=[];drawB()">Сбросить</button><button class="btn" id="chk" onclick="checkB()" disabled>Проверить</button></div>
+  <div id="fb"></div>`);
+  drawB();
+}
+function drawB(){
+  document.getElementById("ans").innerHTML=B.picked.map((k,j)=>`<button class="chip" onclick="B.picked.splice(${j},1);drawB()">${esc(B.mix[k].w)}</button>`).join("")||'<span class="muted" style="padding:8px">Нажимай на слова ниже</span>';
+  document.getElementById("pool").innerHTML=B.mix.map((m,k)=>`<button class="chip ${B.picked.includes(k)?"used":""}" onclick="B.picked.push(${k});drawB()">${esc(m.w)}</button>`).join("");
+  document.getElementById("chk").disabled=B.picked.length<2;
+}
+function checkB(){
+  const en=B.list[B.i][0];const got=B.picked.map(k=>B.mix[k].w).join(" ");
+  const ok=norm(got)===norm(en);if(ok)B.score++;
+  speak(en);
+  document.querySelectorAll(".chip").forEach(c=>c.disabled=true);document.getElementById("chk").disabled=true;
+  document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"bad"}">${ok?"Верно! 🎉":"Правильно: "+esc(en)}</div><button class="btn" onclick="B.i++;showB()">Дальше</button>`;
+}
+
+/* ===================== GRAMMAR ===================== */
+function grammar(){
+  render(`<h1>Грамматика</h1><p class="muted" style="margin:0">Короткое правило и упражнения. Иди по порядку.</p>
+  <div style="margin-top:14px">${GRAMMAR.map((g,i)=>`<button class="tile" style="width:100%;margin-bottom:10px;display:flex;align-items:center;gap:12px" onclick="gTopic('${g.id}')">
+    <div class="ico" style="width:34px;text-align:center;font-weight:800;color:var(--primary)">${i+1}</div>
+    <div style="flex:1"><b style="margin:0">${g.name}</b><small>${g.lvl}${S.grammar[g.id]?` · <span class="done">✓ ${S.grammar[g.id]}/${g.ex.length}</span>`:""}</small></div><span class="muted">›</span></button>`).join("")}</div>`);
+}
+let G={};
+function gTopic(id){const g=GRAMMAR.find(x=>x.id===id);
+  render(`<button class="back" onclick="grammar()">‹ Темы</button><span class="pill" style="margin-left:8px">${g.lvl}</span><h1>${g.name}</h1><div class="card">${g.rule}</div>
+  <button class="btn" onclick="gStart('${id}')">Начать упражнения (${g.ex.length})</button>`);}
+function gStart(id){G={g:GRAMMAR.find(x=>x.id===id),i:0,score:0};gShow();}
+function gShow(){const g=G.g;
+  if(G.i>=g.ex.length){const best=Math.max(S.grammar[g.id]||0,G.score);S.grammar[g.id]=best;addXP(G.score*3);
+    render(`<div class="card" style="text-align:center;margin-top:20px"><div style="font-size:52px">${G.score===g.ex.length?"🏆":"📖"}</div><h2>${G.score} из ${g.ex.length}</h2><p class="muted">${g.name} · +${G.score*3} очков</p>
+    <button class="btn" onclick="gStart('${g.id}')">Повторить</button><button class="btn sec" onclick="gTopic('${g.id}')">Перечитать правило</button><button class="btn sec" onclick="grammar()">Все темы</button></div>`);return;}
+  const [s,opts,c]=g.ex[G.i];
+  render(`<button class="back" onclick="gTopic('${g.id}')">‹ Правило</button>
+  <div style="display:flex;justify-content:space-between"><span class="pill">${g.name}</span><span class="muted">${G.i+1}/${g.ex.length}</span></div>
+  <div class="bar"><i style="width:${G.i/g.ex.length*100}%"></i></div>
+  <div class="q" style="font-size:22px">${esc(s).replace("___",'<span style="color:var(--primary)">___</span>')}</div>
+  <div style="margin-top:16px">${opts.map((o,i)=>`<button class="opt" onclick="gAns(${i},this)">${esc(o)}</button>`).join("")}</div><div id="fb"></div>`);
+}
+function gAns(i,el){const [s,opts,c]=G.g.ex[G.i];const btns=document.querySelectorAll(".opt");
+  if(btns[0].disabled)return;btns.forEach(b=>b.disabled=true);btns[c].classList.add("ok");
+  const ok=i===c;if(ok)G.score++;else el.classList.add("bad");
+  const full=s.replace("___",opts[c]);speak(full);
+  document.getElementById("fb").innerHTML=`<div class="feedback ${ok?"ok":"bad"}">${ok?"Верно! 🎉":"Правильно:"} ${esc(full)}</div><button class="btn" onclick="G.i++;gShow()">Дальше</button>`;}
+
+/* voices load async on iOS */
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}catch(e){}
+go("home");
+</script>
+</body>
+</html>
