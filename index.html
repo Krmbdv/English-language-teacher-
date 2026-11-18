@@ -235,8 +235,38 @@ function home(){
   <div class="card" style="margin-top:14px">
     <b>💡 Совет</b><p class="muted" style="margin:6px 0 0">Нажимай 🔊 и повторяй слова вслух. Так быстрее запоминается произношение.</p>
   </div>
+  <h2>💾 Резервная копия</h2>
+  <div class="card">
+    <p class="muted" style="margin:0 0 6px">Скопируй код и сохрани его в Заметки. С ним можно вернуть прогресс или перенести его на другой телефон.</p>
+    <button class="btn" onclick="exportProgress()">Скопировать код прогресса</button>
+    <button class="btn sec" onclick="showImport()">Восстановить из кода</button>
+    <div id="bk"></div>
+  </div>
   <button class="btn sec" onclick="resetAll()">Сбросить прогресс</button>
   <div id="confirm"></div>`);
+}
+function progressCode(){const j=JSON.stringify(S);return "ENG1-"+btoa(unescape(encodeURIComponent(j)));}
+async function exportProgress(){
+  const code=progressCode(),box=document.getElementById("bk");
+  let copied=false;try{await navigator.clipboard.writeText(code);copied=true;}catch(e){}
+  box.innerHTML=`<div class="feedback ${copied?"ok":""}" style="margin-top:10px">${copied?"Код скопирован ✓ Вставь его в Заметки.":"Не удалось скопировать автоматически. Выдели код ниже и скопируй вручную."}</div>
+  <textarea class="inp" readonly style="margin-top:8px;height:90px;font-size:12px" onclick="this.select()">${code}</textarea>`;
+}
+function showImport(){
+  document.getElementById("bk").innerHTML=`<textarea id="imp" class="inp" style="margin-top:10px;height:90px;font-size:12px" placeholder="Вставь код, который начинается с ENG1-"></textarea>
+  <button class="btn" onclick="importProgress()">Восстановить</button><div id="imsg"></div>`;
+}
+function importProgress(){
+  const raw=(document.getElementById("imp").value||"").trim().replace(/\s+/g,"");
+  const msg=document.getElementById("imsg");
+  try{
+    if(!raw.startsWith("ENG1-"))throw 0;
+    const o=JSON.parse(decodeURIComponent(escape(atob(raw.slice(5)))));
+    if(typeof o!=="object"||!o.known)throw 0;
+    S=Object.assign({xp:0,known:{},grammar:{},days:[],quizBest:0,miss:{},hard:{},ver:2},o);save();
+    msg.innerHTML=`<div class="feedback ok" style="margin-top:10px">Прогресс восстановлен ✓</div>`;
+    setTimeout(home,900);
+  }catch(e){msg.innerHTML=`<div class="feedback bad" style="margin-top:10px">Код не подходит. Проверь, что скопировал его целиком.</div>`;}
 }
 function resetAll(){
   document.getElementById("confirm").innerHTML=`<div class="card" style="margin-top:10px"><b>Точно сбросить весь прогресс?</b>
